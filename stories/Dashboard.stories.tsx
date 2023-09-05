@@ -1,5 +1,5 @@
 import React, { ComponentProps } from 'react';
-import { Dashboard } from '@app/Dashboard/Dashboard';
+import { Dashboard } from '@app/DefaultFilter/DefaultFilterDemo';
 import { Story } from '@storybook/react';
 
 //👇 This default export determines where your story goes in the story list

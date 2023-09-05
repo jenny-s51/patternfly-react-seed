@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Route, RouteComponentProps, Switch, useLocation } from 'react-router-dom';
-import { Dashboard } from '@app/Dashboard/Dashboard';
-import { Support } from '@app/Support/Support';
+import { DefaultFilterDemo } from '@app/DefaultFilter/DefaultFilterDemo';
+import { NewCustomFilterDemo } from '@app/Support/Support';
 import { GeneralSettings } from '@app/Settings/General/GeneralSettings';
 import { ProfileSettings } from '@app/Settings/Profile/ProfileSettings';
 import { NotFound } from '@app/NotFound/NotFound';
@@ -28,16 +28,16 @@ export type AppRouteConfig = IAppRoute | IAppRouteGroup;
 
 const routes: AppRouteConfig[] = [
   {
-    component: Dashboard,
+    component: DefaultFilterDemo,
     exact: true,
-    label: 'Dashboard',
+    label: 'Default Filter Demo',
     path: '/',
     title: 'PatternFly Seed | Main Dashboard',
   },
   {
-    component: Support,
+    component: NewCustomFilterDemo,
     exact: true,
-    label: 'Support',
+    label: 'New Custom Filter Demo',
     path: '/support',
     title: 'PatternFly Seed | Support Page',
   },
