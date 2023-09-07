@@ -30,13 +30,25 @@ import {
   TreeView,
   TreeViewDataItem,
   Pagination,
+  ButtonVariant,
+  Dropdown,
+  DropdownList,
+  OverflowMenu,
+  OverflowMenuContent,
+  OverflowMenuControl,
+  OverflowMenuGroup,
+  OverflowMenuItem,
+  Divider,
+  SelectGroup,
+  SelectList,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { Table, TableText, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { columns, rows } from '../data';
+import { EllipsisVIcon } from '@patternfly/react-icons';
 
-export const DefaultFilterDemo: React.FunctionComponent = () => {
+export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const [filters, setFilters] = React.useState<{
     name: string[];
     status: string[];
@@ -59,14 +71,22 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     group: [],
   });
   const [currentCategory, setCurrentCategory] = React.useState('Name');
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = React.useState(false);
+  const [isOSDropdownOpen, setIsOSDropdownOpen] = React.useState(false);
+  const [isTagsDropdownOpen, setIsTagsDropdownOpen] = React.useState(false);
+  const [isRHCStatusDropdownOpen, setIsRHCStatusDropdownOpen] = React.useState(false);
+  const [isLastSeenDropdownOpen, setIsLastSeenDropdownOpen] = React.useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
-  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = React.useState(false);
   const [nameInput, setNameInput] = React.useState('');
   const [inputValue, setInputValue] = React.useState('');
   const [tableRows, setTableRows] = React.useState(rows.slice(0, 10));
   const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
-  const toggleRef = React.useRef<HTMLButtonElement>(null);
-  const menuRef = React.useRef<HTMLDivElement>();
+  const osToggleRef = React.useRef<HTMLButtonElement>(null);
+  const tagsToggleRef = React.useRef<HTMLButtonElement>(null);
+
+  const osMenuRef = React.useRef<HTMLDivElement>();
+  const tagsMenuRef = React.useRef<HTMLDivElement>();
+
   const [checkedItems, setCheckedItems] = React.useState<TreeViewDataItem[]>([]);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
@@ -126,16 +146,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     }
   };
 
-  const onCategoryToggle = () => {
-    setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
-  };
-
-  const onCategorySelect = (event) => {
-    // console.log('HEY', event.target.innerText);
-    setCurrentCategory(event.target.innerText);
-    setIsCategoryDropdownOpen(false);
-  };
-
   const onFilterToggle = () => {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
@@ -165,7 +175,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         ? [...filters.status, selection]
         : Object.values(filters.status).filter((value) => value !== selection),
     });
-    setIsFilterDropdownOpen(false);
+    // TODO: remove these ? setIsStatusDropdownOpen(false);
   };
 
   const onOSSelect = (event, selection) => {
@@ -176,7 +186,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         ? [...filters.operatingSystem, selection]
         : Object.values(filters.operatingSystem).filter((value) => value !== selection),
     });
-    setIsFilterDropdownOpen(false);
+    // setIsOSDropdownOpen(false);
   };
 
   const onSystemUpdateMethodSelect = (event, selection) => {
@@ -187,7 +197,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         ? [...filters.systemUpdateMethod, selection]
         : Object.values(filters.systemUpdateMethod).filter((value) => value !== selection),
     });
-    setIsFilterDropdownOpen(false);
+    // setIsFilterDropdownOpen(false);
   };
 
   const onRHCStatusSelect = (event, selection) => {
@@ -196,7 +206,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       ...filters,
       rhcStatus: checked ? [selection] : Object.values(filters.rhcStatus).filter((value) => value !== selection),
     });
-    setIsFilterDropdownOpen(false);
+    // setIsRHCStatusDropdownOpen(false);
   };
 
   const onLastSeenSelect = (event, selection) => {
@@ -207,7 +217,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         ? [...filters.lastSeen, selection]
         : Object.values(filters.lastSeen).filter((value) => value !== selection),
     });
-    setIsFilterDropdownOpen(false);
+    // setIsLastSeenDropdownOpen(false);
   };
 
   const onDataCollectorSelect = (event, selection) => {
@@ -226,71 +236,11 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     const checked = event.target.checked;
     setFilters({
       ...filters,
-      group: checked
+      status: checked
         ? [...filters.group, selection]
         : Object.values(filters.group).filter((value) => value !== selection),
     });
-    setIsFilterDropdownOpen(false);
-  };
-
-  const buildCategoryDropdown = () => {
-    const categoryMenuItems = [
-      <SelectOption key="cat1" value="Name">
-        Name
-      </SelectOption>,
-      <SelectOption key="cat2" value="Status">
-        Status
-      </SelectOption>,
-      <SelectOption key="cat3" value="Operating system">
-        Operating system
-      </SelectOption>,
-      <SelectOption key="cat4" value="Data collector">
-        Data collector
-      </SelectOption>,
-      <SelectOption key="cat5" value="RHC status">
-        RHC status
-      </SelectOption>,
-      <SelectOption key="cat6" value="System update method">
-        System update method
-      </SelectOption>,
-      <SelectOption key="cat7" value="Last seen">
-        Last seen
-      </SelectOption>,
-      <SelectOption key="cat8" value="Tags">
-        Tags
-      </SelectOption>,
-      <SelectOption key="cat9" value="Group">
-        Group
-      </SelectOption>,
-    ];
-
-    return (
-      <ToolbarItem>
-        <Select
-          onSelect={(e) => onCategorySelect(e)}
-          selected={currentCategory}
-          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-            <MenuToggle
-              ref={toggleRef}
-              onClick={onCategoryToggle}
-              isExpanded={isCategoryDropdownOpen}
-              icon={<FilterIcon />}
-              style={
-                {
-                  width: '100%',
-                  verticalAlign: 'text-bottom',
-                } as React.CSSProperties
-              }
-            >
-              {currentCategory}
-            </MenuToggle>
-          )}
-          isOpen={isCategoryDropdownOpen}
-        >
-          {categoryMenuItems}
-        </Select>
-      </ToolbarItem>
-    );
+    // setIsFilterDropdownOpen(false);
   };
 
   const buildFilterDropdown = () => {
@@ -498,6 +448,28 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       </SelectOption>,
     ];
 
+    const filterMenuItems = [
+      <>
+        <SelectGroup label="Data Collector">
+          <SelectList>
+            {dataCollectorMenuItems}
+          </SelectList>
+        </SelectGroup>
+        <Divider />
+        <SelectGroup label="System Update Method">
+          <SelectList>
+            {systemUpdateMethodMenuItems}
+          </SelectList>
+        </SelectGroup>
+        <Divider />
+        <SelectGroup label="Group">
+          <SelectList>
+            {groupMenuItems}
+          </SelectList>
+        </SelectGroup>
+      </>
+    ];
+
     // Helper functions for tree
     const isChecked = (dataItem: TreeViewDataItem) => checkedItems.some((item) => item.id === dataItem.id);
     const areAllDescendantsChecked = (dataItem: TreeViewDataItem) =>
@@ -540,13 +512,25 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       return item;
     };
 
-    const onToggleClick = () => {
-      setIsOpen(!isOpen);
+    const onOSToggleClick = () => {
+      setIsOSDropdownOpen(!isOSDropdownOpen);
     };
 
-    const toggle = (
-      <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-        {'Filter by operating system'}
+    const onTagsToggleClick = () => {
+      setIsTagsDropdownOpen(!setIsTagsDropdownOpen);
+    };
+
+    const OSToggle = (
+      <MenuToggle ref={osToggleRef} onClick={onOSToggleClick} isExpanded={isOSDropdownOpen}>
+        {'Operating system'}
+        {filters.operatingSystem.length > 0 && <Badge isRead>{filters.operatingSystem.length}</Badge>}
+      </MenuToggle>
+    );
+
+    const tagsToggle = (
+      <MenuToggle ref={tagsToggleRef} onClick={onTagsToggleClick} isExpanded={isTagsDropdownOpen}>
+        {'Tags'}
+        {filters.tags.length > 0 && <Badge isRead>{filters.tags.length}</Badge>}
       </MenuToggle>
     );
 
@@ -629,7 +613,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
           ? [...filters.operatingSystem, treeViewItem.name]
           : Object.values(filters.operatingSystem).filter((value) => value !== treeViewItem.name),
       });
-      setIsFilterDropdownOpen(false);
+      // setIsFilterDropdownOpen(false);
 
       const checkedItemTree = options
         .map((opt) => Object.assign({}, opt))
@@ -642,9 +626,9 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       );
     };
 
-    const OSmenu = (
+    const osMenu = (
       <Panel
-        ref={menuRef}
+        ref={osMenuRef}
         variant="raised"
         style={{
           width: '400px',
@@ -669,7 +653,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     const tagsMapped = tagsOptions.map(mapTree);
     const tagsMenu = (
       <Panel
-        ref={menuRef}
+        ref={tagsMenuRef}
         variant="raised"
         style={{
           width: '400px',
@@ -694,38 +678,21 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     return (
       <React.Fragment>
         <ToolbarFilter
-          chips={filters.name}
-          deleteChip={(_category, chip) => onDelete('name', chip as string)}
-          categoryName="Name"
-          showToolbarItem={currentCategory === 'Name'}
-        >
-          <SearchInput
-            aria-label="name filter"
-            placeholder="Filter by name..."
-            onChange={(_event, value) => onInputChange(value)}
-            value={inputValue}
-            onClear={() => {
-              onInputChange('');
-            }}
-            onSearch={onNameInput}
-          />
-        </ToolbarFilter>
-        <ToolbarFilter
-          chips={filters.status}
+          // chips={filters.status}
           deleteChip={(_category, chip) => onDelete('status', chip as string)}
           categoryName="Status"
-          showToolbarItem={currentCategory === 'Status'}
         >
           <Select
             aria-label="Status"
-            isOpen={isFilterDropdownOpen}
+            isOpen={isStatusDropdownOpen}
+            onOpenChange={(isStatusDropdownOpen) => setIsStatusDropdownOpen(isStatusDropdownOpen)}
             onSelect={onStatusSelect}
             selected={filters.status}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
               <MenuToggle
                 ref={toggleRef}
-                onClick={onFilterToggle}
-                isExpanded={isFilterDropdownOpen}
+                onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                isExpanded={isStatusDropdownOpen}
                 style={
                   {
                     width: '100%',
@@ -733,7 +700,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                   } as React.CSSProperties
                 }
               >
-                Filter by status
+                Status
                 {filters.status.length > 0 && <Badge isRead>{filters.status.length}</Badge>}
               </MenuToggle>
             )}
@@ -742,68 +709,51 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
           </Select>
         </ToolbarFilter>
         <ToolbarFilter
-          chips={filters.operatingSystem}
+          // chips={filters.operatingSystem}
           deleteChip={(_category, chip) => onDelete('operatingSystem', chip as string)}
           categoryName="Operating system"
-          showToolbarItem={currentCategory === 'Operating system'}
         >
           <MenuContainer
-            isOpen={isOpen}
-            onOpenChange={(isOpen) => setIsOpen(isOpen)}
+            isOpen={isOSDropdownOpen}
+            onOpenChange={(isOSDropdownOpen) => setIsOSDropdownOpen(isOSDropdownOpen)}
             onOpenChangeKeys={['Escape']}
-            menu={OSmenu}
-            menuRef={menuRef}
-            toggle={toggle}
-            toggleRef={toggleRef}
+            menu={osMenu}
+            menuRef={osMenuRef}
+            toggle={OSToggle}
+            toggleRef={osToggleRef}
           />
         </ToolbarFilter>
         <ToolbarFilter
-          chips={filters.dataCollector}
-          deleteChip={(_category, chip) => onDelete('dataCollector', chip as string)}
-          categoryName="Data collector"
-          showToolbarItem={currentCategory === 'Data collector'}
+          // chips={filters.tags}
+          deleteChip={(_category, chip) => onDelete('tags', chip as string)}
+          categoryName="Tags"
         >
-          <Select
-            aria-label="Data collector"
-            isOpen={isFilterDropdownOpen}
-            onSelect={onDataCollectorSelect}
-            selected={filters.dataCollector}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-              <MenuToggle
-                ref={toggleRef}
-                onClick={onFilterToggle}
-                isExpanded={isFilterDropdownOpen}
-                style={
-                  {
-                    width: '100%',
-                    verticalAlign: 'text-bottom',
-                  } as React.CSSProperties
-                }
-              >
-                Filter by data collector
-                {filters.dataCollector.length > 0 && <Badge isRead>{filters.dataCollector.length}</Badge>}
-              </MenuToggle>
-            )}
-          >
-            {dataCollectorMenuItems}
-          </Select>
+          <MenuContainer
+            isOpen={isTagsDropdownOpen}
+            onOpenChange={(isTagsDropdownOpen) => setIsTagsDropdownOpen(isTagsDropdownOpen)}
+            onOpenChangeKeys={['Escape']}
+            menu={tagsMenu}
+            menuRef={tagsMenuRef}
+            toggle={tagsToggle}
+            toggleRef={tagsToggleRef}
+          />
         </ToolbarFilter>
         <ToolbarFilter
-          chips={filters.rhcStatus}
+          // chips={filters.rhcStatus}
           deleteChip={(_category, chip) => onDelete('rhcStatus', chip as string)}
           categoryName="RHC status"
-          showToolbarItem={currentCategory === 'RHC status'}
         >
           <Select
             aria-label="RHC status"
-            isOpen={isFilterDropdownOpen}
+            isOpen={isRHCStatusDropdownOpen}
+            onOpenChange={(isRHCStatusDropdownOpen) => setIsRHCStatusDropdownOpen(isRHCStatusDropdownOpen)}
             onSelect={onRHCStatusSelect}
             selected={filters.rhcStatus}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
               <MenuToggle
                 ref={toggleRef}
-                onClick={onFilterToggle}
-                isExpanded={isFilterDropdownOpen}
+                onClick={() => setIsRHCStatusDropdownOpen(!isRHCStatusDropdownOpen)}
+                isExpanded={isRHCStatusDropdownOpen}
                 style={
                   {
                     width: '100%',
@@ -811,7 +761,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                   } as React.CSSProperties
                 }
               >
-                Filter by RHC status
+                RHC status
                 {filters.rhcStatus.length > 0 && <Badge isRead>{filters.rhcStatus.length}</Badge>}
               </MenuToggle>
             )}
@@ -820,45 +770,13 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
           </Select>
         </ToolbarFilter>
         <ToolbarFilter
-          chips={filters.systemUpdateMethod}
-          deleteChip={(_category, chip) => onDelete('systemUpdateMethod', chip as string)}
-          categoryName="System update method"
-          showToolbarItem={currentCategory === 'System update method'}
-        >
-          <Select
-            aria-label="System update method"
-            isOpen={isFilterDropdownOpen}
-            onSelect={onSystemUpdateMethodSelect}
-            selected={filters.systemUpdateMethod}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-              <MenuToggle
-                ref={toggleRef}
-                onClick={onFilterToggle}
-                isExpanded={isFilterDropdownOpen}
-                style={
-                  {
-                    width: '100%',
-                    verticalAlign: 'text-bottom',
-                  } as React.CSSProperties
-                }
-              >
-                Filter by system update method
-                {filters.systemUpdateMethod.length > 0 && <Badge isRead>{filters.systemUpdateMethod.length}</Badge>}
-              </MenuToggle>
-            )}
-          >
-            {systemUpdateMethodMenuItems}
-          </Select>
-        </ToolbarFilter>
-        <ToolbarFilter
-          chips={filters.lastSeen}
+          // chips={filters.lastSeen}
           deleteChip={(_category, chip) => onDelete('Last seen', chip as string)}
           categoryName="Last seen"
-          showToolbarItem={currentCategory === 'Last seen'}
         >
           <Select
             aria-label="Last seen"
-            isOpen={isFilterDropdownOpen}
+            isOpen={isLastSeenDropdownOpen}
             onSelect={onLastSeenSelect}
             selected={filters.lastSeen}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
@@ -874,7 +792,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                   } as React.CSSProperties
                 }
               >
-                Filter by last seen
+                Last seen
                 {filters.lastSeen.length > 0 && <Badge isRead>{filters.lastSeen.length}</Badge>}
               </MenuToggle>
             )}
@@ -882,33 +800,18 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
             {lastSeenMenuItems}
           </Select>
         </ToolbarFilter>
+
         <ToolbarFilter
-          chips={filters.tags}
-          deleteChip={(_category, chip) => onDelete('tags', chip as string)}
-          categoryName="Tags"
-          showToolbarItem={currentCategory === 'Tags'}
-        >
-          <MenuContainer
-            isOpen={isOpen}
-            onOpenChange={(isOpen) => setIsOpen(isOpen)}
-            onOpenChangeKeys={['Escape']}
-            menu={tagsMenu}
-            menuRef={menuRef}
-            toggle={toggle}
-            toggleRef={toggleRef}
-          />
-        </ToolbarFilter>
-        <ToolbarFilter
-          chips={filters.group}
+          // chips={filters.group}
           deleteChip={(_category, chip) => onDelete('group', chip as string)}
           categoryName="Group"
-          showToolbarItem={currentCategory === 'Group'}
         >
           <Select
             aria-label="Group"
             isOpen={isFilterDropdownOpen}
+            onOpenChange={(isFilterDropdownOpen) => setIsFilterDropdownOpen(isFilterDropdownOpen)}
             onSelect={onGroupSelect}
-            selected={filters.group}
+            selected={filters.status}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
               <MenuToggle
                 ref={toggleRef}
@@ -921,39 +824,64 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                   } as React.CSSProperties
                 }
               >
-                Filter by group
+                <FilterIcon />
                 {filters.group.length > 0 && <Badge isRead>{filters.group.length}</Badge>}
               </MenuToggle>
             )}
           >
-            {groupMenuItems}
+            {filterMenuItems}
           </Select>
         </ToolbarFilter>
       </React.Fragment>
     );
   };
 
+  const firstRow = (
+    <Toolbar clearAllFilters={onDelete}>
+      <ToolbarContent>
+        <ToolbarFilter
+          // chips={filters.name}
+          deleteChip={(_category, chip) => onDelete('name', chip as string)}
+          categoryName="Name"
+        >
+          <SearchInput
+            aria-label="name filter"
+            placeholder="Filter by name..."
+            onChange={(_event, value) => onInputChange(value)}
+            value={inputValue}
+            onClear={() => {
+              onInputChange('');
+            }}
+            onSearch={onNameInput}
+          />
+        </ToolbarFilter>
+      </ToolbarContent>
+    </Toolbar>
+  );
+
   const renderToolbar = () => {
     return (
-      <Toolbar id="toolbar-with-chip-groups" clearAllFilters={onDelete} collapseListedFiltersBreakpoint="xl">
-        <ToolbarContent>
-          <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
-            <ToolbarGroup
-              variant="filter-group"
-              style={
-                {
-                  lineHeight: '22px',
-                  alignItems: 'center',
-                } as React.CSSProperties
-              }
-            >
-              {buildCategoryDropdown()}
-              {buildFilterDropdown()}
-            </ToolbarGroup>
-          </ToolbarToggleGroup>
-          <ToolbarItem variant="pagination">{buildPagination('top', true)}</ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
+      <React.Fragment>
+        {firstRow}
+        <Toolbar id="toolbar-with-chip-groups" clearAllFilters={onDelete} collapseListedFiltersBreakpoint="xl">
+          <ToolbarContent>
+            <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
+              <ToolbarGroup
+                variant="filter-group"
+                style={
+                  {
+                    lineHeight: '22px',
+                    alignItems: 'center',
+                  } as React.CSSProperties
+                }
+              >
+                {buildFilterDropdown()}
+              </ToolbarGroup>
+            </ToolbarToggleGroup>
+            <ToolbarItem variant="pagination">{buildPagination('top', true)}</ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
+      </React.Fragment>
     );
   };
 
@@ -962,6 +890,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       filters.status.length ||
       filters.dataCollector.length ||
       filters.rhcStatus.length ||
+      filters.tags.length ||
       filters.operatingSystem.length ||
       filters.group.length ||
       filters.systemUpdateMethod.length) > 0
@@ -972,16 +901,15 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
             (filters.status.length === 0 || filters.status.includes(row.status)) &&
             (filters.dataCollector.length === 0 || filters.dataCollector.includes(row.dataCollector)) &&
             (filters.rhcStatus.length === 0 || filters.rhcStatus.includes(row.rhcStatus)) &&
+            (filters.tags.length === 0 || filters.tags.includes(row.tags)) &&
             (filters.systemUpdateMethod.length === 0 || filters.systemUpdateMethod.includes(row.systemUpdateMethod)) &&
             (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem)) &&
-            (filters.group.length === 0 ||
-              filters.group.includes(row.group) ||
-              filters.group.some((group) => group === 'Ungrouped systems' && row.group === 'N/A'))
+            (filters.group.length === 0 || filters.group.includes(row.group))
           );
         })
       : rows;
 
-  console.log('WEEEE', filters);
+  // console.log('WEEEE', filteredRows);
 
   console.log('FILERS.OPERATINGSYSTEM', filters.operatingSystem);
 

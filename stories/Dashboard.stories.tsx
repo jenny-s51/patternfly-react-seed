@@ -1,15 +1,15 @@
 import React, { ComponentProps } from 'react';
-import { Dashboard } from '@app/DefaultFilter/DefaultFilterDemo';
+import { DefaultFilterDemo } from '@app/DefaultFilter/DefaultFilterDemo';
 import { Story } from '@storybook/react';
 
 //👇 This default export determines where your story goes in the story list
 export default {
-  title: 'Components/Dashboard',
-  component: Dashboard,
+  title: 'Components/DefaultFilterDemo',
+  component: DefaultFilterDemo,
 };
 
 //👇 We create a “template” of how args map to rendering
-const Template: Story<ComponentProps<typeof Dashboard>> = (args) => <Dashboard {...args} />;
+const Template: Story<ComponentProps<typeof DefaultFilterDemo>> = (args) => <DefaultFilterDemo {...args} />;
 
 export const FirstStory = Template.bind({});
 FirstStory.args = {
