@@ -9,7 +9,7 @@ export const columns = [
     'Last seen'
 ]
 
-export const rows = [
+export const rows =[
     {
         "name": "rhiqe.qqapqzkpfd",
         "status": "Fresh",
@@ -18,7 +18,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 minute ago"
+        "lastSeen": "1 minute ago",
+        "group": "N/A",
     },
     {
         "name": "sathyper-a57f0130-a4d7-4b44-9efb-6637273fffaf",
@@ -28,7 +29,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "10 minutes ago"
+        "lastSeen": "10 minutes ago",
+        "group": "Production",
     },
     {
         "name": "satcloud-aws-9ef115b8-42a9-4990-9bff-06c767b11b7e",
@@ -38,7 +40,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Staging"
     },
     {
         "name": "gfdhszvy.test",
@@ -48,7 +51,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Staging"
     },
     {
         "name": "rem_029bfa99-3b8f-47b2-ae9d-50502480a08b",
@@ -58,7 +62,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Security"
     },
     {
         "name": "rem_68886cf8-21fb-411d-83a3-3f1a6e0e454b",
@@ -68,7 +73,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Production"
     },
     {
         "name": "rhiqe.nwkgfpxzqe",
@@ -78,7 +84,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Production"
     },
     {
         "name": "rhiqe.blyrcltxsy",
@@ -88,7 +95,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Production"
     },
     {
         "name": "rem_9bba64da-4cb3-4256-9119-fd93b21a26bc",
@@ -98,7 +106,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Staging"
     },
     {
         "name": "peahpubb",
@@ -108,7 +117,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Staging"
     },
     {
         "name": "tlweutnn",
@@ -118,7 +128,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Production"
     },
     {
         "name": "rem_3b74d99e-d113-4d95-a6df-f301a44d1045",
@@ -128,7 +139,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Staging"
     },
     {
         "name": "iqe-patch-rhel-80",
@@ -138,7 +150,8 @@ export const rows = [
         "dataCollector": "insights-client",
         "rhcStatus": "Active",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Production"
     },
     {
         "name": "rhiqe.msqxzliano",
@@ -148,7 +161,8 @@ export const rows = [
         "dataCollector": "subscription-manager",
         "rhcStatus": "Inactive",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Staging"
     },
     {
         "name": "rhiqe.lgbnjhdwhg",
@@ -158,7 +172,8 @@ export const rows = [
         "dataCollector": "subscription-manager",
         "rhcStatus": "Inactive",
         "systemUpdateMethod": "yum",
-        "lastSeen": "1 hour ago"
+        "lastSeen": "1 hour ago",
+        "group": "Security "
     },
     {
         "name": "csbprodrhel93-897",
@@ -168,7 +183,8 @@ export const rows = [
         "dataCollector": "subscription-manager",
         "rhcStatus": "Inactive",
         "systemUpdateMethod": "dnf",
-        "lastSeen": "1 month ago"
+        "lastSeen": "1 month ago",
+        "group": "Preview"
     },
     {
         "name": "LKQohNnl",
@@ -178,7 +194,8 @@ export const rows = [
         "dataCollector": "subscription-manager",
         "rhcStatus": "Inactive",
         "systemUpdateMethod": "dnf",
-        "lastSeen": "1 month ago"
+        "lastSeen": "1 month ago",
+        "group": "Staging"
     },
     {
         "name": "FCHtHHZd",
@@ -188,7 +205,8 @@ export const rows = [
         "dataCollector": "Satellite/Discovery",
         "rhcStatus": "Inactive",
         "systemUpdateMethod": "dnf",
-        "lastSeen": "1 month ago"
+        "lastSeen": "1 month ago",
+        "group": "Production"
     },
     {
         "name": "csbprodrhel92-896",
@@ -198,16 +216,18 @@ export const rows = [
         "dataCollector": "insights-client not connected",
         "rhcStatus": "Inactive",
         "systemUpdateMethod": "dnf",
-        "lastSeen": "1 month ago"
+        "lastSeen": "1 month ago",
+        "group": "Preview"
     },
     {
         "name": "YknnoxQk",
-        "status": "Uknown",
+        "status": "Unknown",
         "operatingSystem": "RHEL 8.9",
         "tags": "Location: Asia, Environment: Preview",
         "dataCollector": "insights-client not connected",
         "rhcStatus": "Inactive",
         "systemUpdateMethod": "rpm-ostree",
-        "lastSeen": "1 year ago"
+        "lastSeen": "1 year ago",
+        "group": "Preview"
     }
 ]

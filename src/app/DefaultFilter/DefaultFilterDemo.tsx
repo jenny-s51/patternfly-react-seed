@@ -29,6 +29,7 @@ import {
   PanelMainBody,
   TreeView,
   TreeViewDataItem,
+  Pagination,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
@@ -39,12 +40,13 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [filters, setFilters] = React.useState<{
     name: string[];
     status: string[];
-    operatingSystem: string[];
+    operatingSystem: TreeView[];
     dataCollector: string[];
     rhcStatus: string[];
     systemUpdateMethod: string[];
     lastSeen: string[];
     tags: string[];
+    groups: string[];
   }>({
     name: [],
     status: [],
@@ -54,6 +56,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     systemUpdateMethod: [],
     lastSeen: [],
     tags: [],
+    groups: [],
   });
   const [currentCategory, setCurrentCategory] = React.useState('Name');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
@@ -61,21 +64,53 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [nameInput, setNameInput] = React.useState('');
   const [inputValue, setInputValue] = React.useState('');
   const [tableRows, setTableRows] = React.useState(rows.slice(0, 10));
+  const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
   const toggleRef = React.useRef<HTMLButtonElement>(null);
   const menuRef = React.useRef<HTMLDivElement>();
   const [checkedItems, setCheckedItems] = React.useState<TreeViewDataItem[]>([]);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-  console.log('filters', filters);
+  // console.log('filters', filters);
+
+  const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(10);
+  const handleSetPage = (_evt, newPage, _perPage, startIdx, endIdx) => {
+    setPaginatedRows(rows.slice(startIdx, endIdx));
+    setPage(newPage);
+  };
+  const handlePerPageSelect = (_evt, newPerPage, newPage, startIdx, endIdx) => {
+    setPaginatedRows(rows.slice(startIdx, endIdx));
+    setPage(newPage);
+    setPerPage(newPerPage);
+  };
+
+  const buildPagination = (variant, isCompact) => (
+    <Pagination
+      isCompact={isCompact}
+      itemCount={rows.length}
+      page={page}
+      perPage={perPage}
+      onSetPage={handleSetPage}
+      onPerPageSelect={handlePerPageSelect}
+      variant={variant}
+      titles={{
+        paginationAriaLabel: `${variant} pagination`,
+      }}
+    />
+  );
 
   const onDelete = (type = '', id = '') => {
     console.log('ID', id);
     console.log('type', type);
     if (type) {
-      filters[type] = filters[type].filter((s) => s !== id);
-      return {
-        filters: filters,
-      };
+      const copyOfChips = filters[type];
+      console.log('yum chips', copyOfChips);
+      const filteredCopy = copyOfChips.filter((chip) => chip !== id);
+      console.log('COPY', filteredCopy);
+      setFilters({
+        ...filters,
+        [type]: filteredCopy,
+      });
     } else {
       setFilters({
         name: [],
@@ -86,6 +121,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         systemUpdateMethod: [],
         lastSeen: [],
         tags: [],
+        groups: [],
       });
     }
   };
@@ -95,7 +131,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   };
 
   const onCategorySelect = (event) => {
-    console.log('HEY', event.target.innerText);
+    // console.log('HEY', event.target.innerText);
     setCurrentCategory(event.target.innerText);
     setIsCategoryDropdownOpen(false);
   };
@@ -137,7 +173,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     setFilters({
       ...filters,
       operatingSystem: checked
-        ? [selection]
+        ? [...filters.operatingSystem, selection]
         : Object.values(filters.operatingSystem).filter((value) => value !== selection),
     });
     setIsFilterDropdownOpen(false);
@@ -148,7 +184,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     setFilters({
       ...filters,
       systemUpdateMethod: checked
-        ? [selection]
+        ? [...filters.systemUpdateMethod, selection]
         : Object.values(filters.systemUpdateMethod).filter((value) => value !== selection),
     });
     setIsFilterDropdownOpen(false);
@@ -176,11 +212,23 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
 
   const onDataCollectorSelect = (event, selection) => {
     const checked = event.target.checked;
+    // console.log(selection);
     setFilters({
       ...filters,
       dataCollector: checked
         ? [...filters.dataCollector, selection]
         : Object.values(filters).filter((value) => value !== selection),
+    });
+    setIsFilterDropdownOpen(false);
+  };
+
+  const onGroupsSelect = (event, selection) => {
+    const checked = event.target.checked;
+    setFilters({
+      ...filters,
+      status: checked
+        ? [...filters.groups, selection]
+        : Object.values(filters.groups).filter((value) => value !== selection),
     });
     setIsFilterDropdownOpen(false);
   };
@@ -193,16 +241,16 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       <SelectOption key="cat2" value="Status">
         Status
       </SelectOption>,
-      <SelectOption key="cat3" value="Operating System">
+      <SelectOption key="cat3" value="Operating system">
         Operating system
       </SelectOption>,
-      <SelectOption key="cat4" value="Data Collector">
+      <SelectOption key="cat4" value="Data collector">
         Data collector
       </SelectOption>,
-      <SelectOption key="cat5" value="RHC Status">
+      <SelectOption key="cat5" value="RHC status">
         RHC status
       </SelectOption>,
-      <SelectOption key="cat6" value="System Update Method">
+      <SelectOption key="cat6" value="System update method">
         System update method
       </SelectOption>,
       <SelectOption key="cat7" value="Last seen">
@@ -320,7 +368,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         hasCheckbox
         key="insightsClients"
         value="insights-clients"
-        isSelected={filters.dataCollector.includes('Fresh')}
+        isSelected={filters.dataCollector.includes('insights-clients')}
       >
         insights-clients
       </SelectOption>,
@@ -328,7 +376,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         hasCheckbox
         key="subscriptionManager"
         value="subscription-manager"
-        isSelected={filters.dataCollector.includes('Stale')}
+        isSelected={filters.dataCollector.includes('subscription-manager')}
       >
         subscription-manager
       </SelectOption>,
@@ -360,37 +408,19 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     ];
 
     const systemUpdateMethodMenuItems = [
-      <SelectOption
-        hasCheckbox
-        key="statusFresh"
-        value="Fresh"
-        isSelected={filters.systemUpdateMethod.includes('Fresh')}
-      >
-        Fresh
+      <SelectOption hasCheckbox key="methodYum" value="yum" isSelected={filters.systemUpdateMethod.includes('yum')}>
+        yum
+      </SelectOption>,
+      <SelectOption hasCheckbox key="methodDnf" value="dnf" isSelected={filters.systemUpdateMethod.includes('dnf')}>
+        dnf
       </SelectOption>,
       <SelectOption
         hasCheckbox
-        key="statusStale"
-        value="Stale"
-        isSelected={filters.systemUpdateMethod.includes('Stale')}
+        key="methodRpmOstree"
+        value="rpm-ostree"
+        isSelected={filters.systemUpdateMethod.includes('rpm-ostree')}
       >
-        Stale
-      </SelectOption>,
-      <SelectOption
-        hasCheckbox
-        key="statusStaleWarning"
-        value="Stale warning"
-        isSelected={filters.systemUpdateMethod.includes('Stale warning')}
-      >
-        Stale warning
-      </SelectOption>,
-      <SelectOption
-        hasCheckbox
-        key="statusUnknown"
-        value="Unknown"
-        isSelected={filters.systemUpdateMethod.includes('Unknown')}
-      >
-        Unknown
+        rpm-ostree
       </SelectOption>,
     ];
 
@@ -422,7 +452,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       <SelectOption
         hasCheckbox
         key="moreThan15Days"
-        value="Unknown"
+        value="moreThan15Days"
         isSelected={filters.lastSeen.includes('More than 15 days ago')}
       >
         More than 15 days ago
@@ -430,7 +460,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       <SelectOption
         hasCheckbox
         key="moreThan30Days"
-        value="Unknown"
+        value="moreThan15Days"
         isSelected={filters.lastSeen.includes('More than 30 days ago')}
       >
         More than 30 days ago
@@ -499,7 +529,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         children: [
           {
             name: 'North America',
-            // name: 'Satellite',
             id: 'RHEL_9.3',
             checkProps: { checked: false },
           },
@@ -522,12 +551,10 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         children: [
           {
             name: 'Production',
-            // name: 'insights-client',
             id: 'production',
             checkProps: { checked: false },
           },
           {
-            // title: 'Preview',
             name: 'Preview',
             id: 'preview',
             checkProps: { checked: false },
@@ -559,8 +586,20 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       const checked = (evt.target as HTMLInputElement).checked;
 
       let options: TreeViewDataItem[] = [];
+      console.log(treeViewItem);
 
       options = osOptions;
+
+
+      console.log(Object.values(filters.operatingSystem).filter((value) => value !== treeViewItem.name))
+
+        setFilters({
+          ...filters,
+          operatingSystem: checked
+            ? [...filters.operatingSystem, treeViewItem.name]
+            : Object.values(filters.operatingSystem).filter((value) => value !== treeViewItem.name),
+        });
+        setIsFilterDropdownOpen(false);
 
       const checkedItemTree = options
         .map((opt) => Object.assign({}, opt))
@@ -626,7 +665,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       <React.Fragment>
         <ToolbarFilter
           chips={filters.name}
-          deleteChip={() => onDelete('name')}
+          deleteChip={(_category, chip) => onDelete('name', chip as string)}
           categoryName="Name"
           showToolbarItem={currentCategory === 'Name'}
         >
@@ -643,14 +682,13 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.status}
-          deleteChip={() => onDelete('status')}
+          deleteChip={(_category, chip) => onDelete('status', chip as string)}
           categoryName="Status"
           showToolbarItem={currentCategory === 'Status'}
         >
           <Select
             aria-label="Status"
             isOpen={isFilterDropdownOpen}
-            minWidth="100px"
             onSelect={onStatusSelect}
             selected={filters.status}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
@@ -675,7 +713,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.operatingSystem}
-          deleteChip={() => onDelete('operatingSystem')}
+          deleteChip={(_category, chip) => onDelete('operatingSystem', chip as string)}
           categoryName="Operating system"
           showToolbarItem={currentCategory === 'Operating system'}
         >
@@ -691,14 +729,13 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.dataCollector}
-          deleteChip={() => onDelete('dataCollector')}
+          deleteChip={(_category, chip) => onDelete('dataCollector', chip as string)}
           categoryName="Data collector"
           showToolbarItem={currentCategory === 'Data collector'}
         >
           <Select
             aria-label="Data collector"
             isOpen={isFilterDropdownOpen}
-            minWidth="100px"
             onSelect={onDataCollectorSelect}
             selected={filters.dataCollector}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
@@ -723,14 +760,13 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.rhcStatus}
-          deleteChip={() => onDelete('rhcStatus')}
+          deleteChip={(_category, chip) => onDelete('rhcStatus', chip as string)}
           categoryName="RHC status"
           showToolbarItem={currentCategory === 'RHC status'}
         >
           <Select
             aria-label="RHC status"
             isOpen={isFilterDropdownOpen}
-            minWidth="100px"
             onSelect={onRHCStatusSelect}
             selected={filters.rhcStatus}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
@@ -755,14 +791,13 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.systemUpdateMethod}
-          deleteChip={() => onDelete('systemUpdateMethod')}
+          deleteChip={(_category, chip) => onDelete('systemUpdateMethod', chip as string)}
           categoryName="System update method"
           showToolbarItem={currentCategory === 'System update method'}
         >
           <Select
             aria-label="System update method"
             isOpen={isFilterDropdownOpen}
-            minWidth="100px"
             onSelect={onSystemUpdateMethodSelect}
             selected={filters.systemUpdateMethod}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
@@ -787,18 +822,18 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.lastSeen}
-          deleteChip={onDelete}
+          deleteChip={(_category, chip) => onDelete('Last seen', chip as string)}
           categoryName="Last seen"
           showToolbarItem={currentCategory === 'Last seen'}
         >
           <Select
             aria-label="Last seen"
             isOpen={isFilterDropdownOpen}
-            minWidth="100px"
             onSelect={onLastSeenSelect}
             selected={filters.lastSeen}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
               <MenuToggle
+                isDisabled
                 ref={toggleRef}
                 onClick={onFilterToggle}
                 isExpanded={isFilterDropdownOpen}
@@ -809,7 +844,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                   } as React.CSSProperties
                 }
               >
-                Filter by system update method
+                Filter by last seen
                 {filters.lastSeen.length > 0 && <Badge isRead>{filters.lastSeen.length}</Badge>}
               </MenuToggle>
             )}
@@ -819,7 +854,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.tags}
-          deleteChip={() => onDelete('Tags')}
+          deleteChip={(_category, chip) => onDelete('tags', chip as string)}
           categoryName="Tags"
           showToolbarItem={currentCategory === 'Tags'}
         >
@@ -832,6 +867,37 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
             toggle={toggle}
             toggleRef={toggleRef}
           />
+        </ToolbarFilter>
+        <ToolbarFilter
+          chips={filters.groups}
+          deleteChip={(_category, chip) => onDelete('groups', chip as string)}
+          categoryName="Groups"
+          showToolbarItem={currentCategory === 'Groups'}
+        >
+          <Select
+            aria-label="Groups"
+            isOpen={isFilterDropdownOpen}
+            onSelect={onGroupsSelect}
+            selected={filters.status}
+            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+              <MenuToggle
+                ref={toggleRef}
+                onClick={onFilterToggle}
+                isExpanded={isFilterDropdownOpen}
+                style={
+                  {
+                    width: '100%',
+                    verticalAlign: 'text-bottom',
+                  } as React.CSSProperties
+                }
+              >
+                Filter by groups
+                {filters.groups.length > 0 && <Badge isRead>{filters.groups.length}</Badge>}
+              </MenuToggle>
+            )}
+          >
+            {statusMenuItems}
+          </Select>
         </ToolbarFilter>
       </React.Fragment>
     );
@@ -855,33 +921,40 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
               {buildFilterDropdown()}
             </ToolbarGroup>
           </ToolbarToggleGroup>
+          <ToolbarItem variant="pagination">{buildPagination('top', true)}</ToolbarItem>
         </ToolbarContent>
       </Toolbar>
     );
   };
 
   const filteredRows =
-    filters.name.length > 0 || filters.status.length > 0
-      ? filters.operatingSystem.length > 0 ||
-        filters.dataCollector.length > 0 ||
-        // filters.rhcStatus.length > 0 ||
-        // filters.systemUpdateMethod.length > 0 ||
-        // filters.lastSeen > 0 ||
-        // filters.tags.length > 0 ||
-        rows.filter((row) => {
+    (filters.name.length ||
+      filters.status.length ||
+      filters.dataCollector.length ||
+      filters.rhcStatus.length ||
+      filters.operatingSystem.length ||
+      filters.systemUpdateMethod.length) > 0
+      ? rows.filter((row) => {
           return (
             (filters.name.length === 0 ||
               filters.name.some((name) => row.name.toLowerCase().includes(name.toLowerCase()))) &&
-            (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem)) &&
             (filters.status.length === 0 || filters.status.includes(row.status)) &&
-            (filters.dataCollector.length === 0 || filters.dataCollector.includes(row.status))
+            (filters.dataCollector.length === 0 || filters.dataCollector.includes(row.dataCollector)) &&
+            (filters.rhcStatus.length === 0 || filters.rhcStatus.includes(row.rhcStatus)) &&
+            (filters.systemUpdateMethod.length === 0 || filters.systemUpdateMethod.includes(row.systemUpdateMethod)) && 
+            (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem))
           );
         })
       : rows;
 
+  // console.log('WEEEE', filteredRows);
+
+  console.log("FILERS.OPERATINGSYSTEM", filters.operatingSystem);
+
+
   let filteredTableRows = filteredRows;
   if (filteredRows.length === 0) {
-    filteredTableRows = [
+    const emptyStateTable = [
       {
         heightAuto: true,
         cells: [
@@ -903,7 +976,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                       <Button
                         variant="link"
                         onClick={() => {
-                          this.onDelete(null);
+                          onDelete(null);
                         }}
                       >
                         Clear all filters
@@ -918,6 +991,8 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       },
     ];
   }
+
+  // console.log('FILTERED ROWS', filteredRows);
 
   return (
     <React.Fragment>
