@@ -65,8 +65,10 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [inputValue, setInputValue] = React.useState('');
   const [tableRows, setTableRows] = React.useState(rows.slice(0, 10));
   const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
-  const toggleRef = React.useRef<HTMLButtonElement>(null);
-  const menuRef = React.useRef<HTMLDivElement>();
+  const osToggleRef = React.useRef<HTMLButtonElement>(null);
+  const osMenuRef = React.useRef<HTMLDivElement>();
+  const tagsToggleRef = React.useRef<HTMLButtonElement>(null);
+  const tagsMenuRef = React.useRef<HTMLDivElement>();
   const [checkedItems, setCheckedItems] = React.useState<TreeViewDataItem[]>([]);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
@@ -544,9 +546,15 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       setIsOpen(!isOpen);
     };
 
-    const toggle = (
-      <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+    const osToggle = (
+      <MenuToggle ref={osToggleRef} onClick={onToggleClick} isExpanded={isOpen}>
         {'Filter by operating system'}
+      </MenuToggle>
+    );
+
+    const tagsToggle = (
+      <MenuToggle ref={tagsToggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+        {'Filter by tags'}
       </MenuToggle>
     );
 
@@ -644,7 +652,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
 
     const OSmenu = (
       <Panel
-        ref={menuRef}
+        ref={osMenuRef}
         variant="raised"
         style={{
           width: '400px',
@@ -669,7 +677,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     const tagsMapped = tagsOptions.map(mapTree);
     const tagsMenu = (
       <Panel
-        ref={menuRef}
+        ref={tagsMenuRef}
         variant="raised"
         style={{
           width: '400px',
@@ -752,9 +760,9 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
             onOpenChange={(isOpen) => setIsOpen(isOpen)}
             onOpenChangeKeys={['Escape']}
             menu={OSmenu}
-            menuRef={menuRef}
-            toggle={toggle}
-            toggleRef={toggleRef}
+            menuRef={osMenuRef}
+            toggle={osToggle}
+            toggleRef={osToggleRef}
           />
         </ToolbarFilter>
         <ToolbarFilter
@@ -893,9 +901,9 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
             onOpenChange={(isOpen) => setIsOpen(isOpen)}
             onOpenChangeKeys={['Escape']}
             menu={tagsMenu}
-            menuRef={menuRef}
-            toggle={toggle}
-            toggleRef={toggleRef}
+            menuRef={tagsMenuRef}
+            toggle={tagsToggle}
+            toggleRef={tagsToggleRef}
           />
         </ToolbarFilter>
         <ToolbarFilter

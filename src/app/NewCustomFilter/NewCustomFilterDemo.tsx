@@ -41,6 +41,8 @@ import {
   Divider,
   SelectGroup,
   SelectList,
+  MenuFooter,
+  PanelHeader,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
@@ -70,6 +72,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     tags: [],
     group: [],
   });
+
   const [currentCategory, setCurrentCategory] = React.useState('Name');
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = React.useState(false);
   const [isOSDropdownOpen, setIsOSDropdownOpen] = React.useState(false);
@@ -80,7 +83,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const [nameInput, setNameInput] = React.useState('');
   const [inputValue, setInputValue] = React.useState('');
   const [tableRows, setTableRows] = React.useState(rows.slice(0, 10));
-  const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
   const osToggleRef = React.useRef<HTMLButtonElement>(null);
   const tagsToggleRef = React.useRef<HTMLButtonElement>(null);
 
@@ -95,19 +97,50 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(10);
   const handleSetPage = (_evt, newPage, _perPage, startIdx, endIdx) => {
-    setPaginatedRows(rows.slice(startIdx, endIdx));
+    setPaginatedRows(filteredRows.slice(startIdx, endIdx));
     setPage(newPage);
   };
   const handlePerPageSelect = (_evt, newPerPage, newPage, startIdx, endIdx) => {
-    setPaginatedRows(rows.slice(startIdx, endIdx));
+    setPaginatedRows(filteredRows.slice(startIdx, endIdx));
     setPage(newPage);
     setPerPage(newPerPage);
   };
 
+  const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
+
+  const filteredRows =
+  (filters.name.length ||
+    filters.status.length ||
+    filters.dataCollector.length ||
+    filters.rhcStatus.length ||
+    filters.tags.length ||
+    filters.operatingSystem.length ||
+    filters.group.length ||
+    filters.systemUpdateMethod.length) > 0
+    ? rows.filter((row) => {
+        return (
+          (filters.name.length === 0 ||
+            filters.name.some((name) => row.name.toLowerCase().includes(name.toLowerCase()))) &&
+          (filters.status.length === 0 || filters.status.includes(row.status)) &&
+          (filters.dataCollector.length === 0 || filters.dataCollector.includes(row.dataCollector)) &&
+          (filters.rhcStatus.length === 0 || filters.rhcStatus.includes(row.rhcStatus)) &&
+          (filters.tags.length === 0 || filters.tags.includes(row.tags)) &&
+          (filters.systemUpdateMethod.length === 0 || filters.systemUpdateMethod.includes(row.systemUpdateMethod)) &&
+          (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem)) &&
+          (filters.group.length === 0 || filters.group.includes(row.group))
+        );
+      })
+    : rows;
+
+
+
+    console.log("WHAT", paginatedRows)
+    console.log("WHARWASDT", filteredRows)
+
   const buildPagination = (variant, isCompact) => (
     <Pagination
       isCompact={isCompact}
-      itemCount={rows.length}
+      itemCount={filteredRows.length}
       page={page}
       perPage={perPage}
       onSetPage={handleSetPage}
@@ -119,31 +152,21 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     />
   );
 
-  const onDelete = (type = '', id = '') => {
+  const onClear = (type = '', id = '') => {
     console.log('ID', id);
     console.log('type', type);
-    if (type) {
-      const copyOfChips = filters[type];
-      console.log('yum chips', copyOfChips);
-      const filteredCopy = copyOfChips.filter((chip) => chip !== id);
-      console.log('COPY', filteredCopy);
-      setFilters({
-        ...filters,
-        [type]: filteredCopy,
-      });
-    } else {
-      setFilters({
-        name: [],
-        status: [],
-        operatingSystem: [],
-        dataCollector: [],
-        rhcStatus: [],
-        systemUpdateMethod: [],
-        lastSeen: [],
-        tags: [],
-        group: [],
-      });
-    }
+
+    setFilters({
+      name: [],
+      status: [],
+      operatingSystem: [],
+      dataCollector: [],
+      rhcStatus: [],
+      systemUpdateMethod: [],
+      lastSeen: [],
+      tags: [],
+      group: [],
+    });
   };
 
   const onFilterToggle = () => {
@@ -204,7 +227,9 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     const checked = event.target.checked;
     setFilters({
       ...filters,
-      rhcStatus: checked ? [selection] : Object.values(filters.rhcStatus).filter((value) => value !== selection),
+      rhcStatus: checked
+        ? [...filters.rhcStatus, selection]
+        : Object.values(filters.rhcStatus).filter((value) => value !== selection),
     });
     // setIsRHCStatusDropdownOpen(false);
   };
@@ -222,7 +247,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
 
   const onDataCollectorSelect = (event, selection) => {
     const checked = event.target.checked;
-    // console.log(selection);
+    console.log(selection);
     setFilters({
       ...filters,
       dataCollector: checked
@@ -232,14 +257,57 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     setIsFilterDropdownOpen(false);
   };
 
-  const onGroupSelect = (event, selection) => {
+  const onMoreFilterOptionsSelect = (event, selection) => {
     const checked = event.target.checked;
-    setFilters({
-      ...filters,
-      status: checked
-        ? [...filters.group, selection]
-        : Object.values(filters.group).filter((value) => value !== selection),
-    });
+
+    console.log('event target', event);
+
+    console.log('ooooo', selection);
+
+    const dataCollectorSelection =
+      selection === 'insights-clients' ||
+      selection === 'subscription-manager' ||
+      selection === 'Satellite/Discovery' ||
+      selection === 'insights-client not connected';
+
+    const systemUpdateMethodSelection = selection === 'yum' || selection === 'dnf' || selection === 'rpm-ostree';
+
+    const groupSelection =
+      selection === 'Ungrouped systems' ||
+      selection === 'Production' ||
+      selection === 'Staging' ||
+      selection === 'Preview' ||
+      selection === 'Security';
+
+    console.log(dataCollectorSelection);
+
+    console.log(systemUpdateMethodSelection);
+
+    console.log(groupSelection);
+
+    if (dataCollectorSelection) {
+      setFilters({
+        ...filters,
+        dataCollector: checked
+          ? [...filters.dataCollector, selection]
+          : Object.values(filters.dataCollector).filter((value) => value !== selection),
+      });
+    } else if (systemUpdateMethodSelection) {
+      setFilters({
+        ...filters,
+        systemUpdateMethod: checked
+          ? [...filters.systemUpdateMethod, selection]
+          : Object.values(filters.systemUpdateMethod).filter((value) => value !== selection),
+      });
+    } else if (groupSelection) {
+      setFilters({
+        ...filters,
+        group: checked
+          ? [...filters.group, selection]
+          : Object.values(filters.group).filter((value) => value !== selection),
+      });
+    }
+
     // setIsFilterDropdownOpen(false);
   };
 
@@ -297,6 +365,18 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     ];
 
     const statusMenuItems = [
+      <MenuFooter key="clear" value="Clear">
+        <Button
+          variant="link"
+          isInline
+          onClick={() => {
+            onClear('Status');
+            setIsStatusDropdownOpen(false);
+          }}
+        >
+          Clear
+        </Button>
+      </MenuFooter>,
       <SelectOption hasCheckbox key="statusFresh" value="Fresh" isSelected={filters.status.includes('Fresh')}>
         Fresh
       </SelectOption>,
@@ -352,10 +432,22 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     ];
 
     const rhcStatusMenuItems = [
+      <MenuFooter key="clear" value="Clear">
+        <Button
+          variant="link"
+          isInline
+          onClick={() => {
+            onClear('rhcStatus');
+            setIsRHCStatusDropdownOpen(false);
+          }}
+        >
+          Clear
+        </Button>
+      </MenuFooter>,
       <SelectOption hasCheckbox key="active" value="Active" isSelected={filters.rhcStatus.includes('Active')}>
         Active
       </SelectOption>,
-      <SelectOption hasCheckbox key="inactive" value="Active" isSelected={filters.rhcStatus.includes('Inactive')}>
+      <SelectOption hasCheckbox key="inactive" value="Inactive" isSelected={filters.rhcStatus.includes('Inactive')}>
         Inactive
       </SelectOption>,
     ];
@@ -450,24 +542,32 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
 
     const filterMenuItems = [
       <>
+        <MenuFooter key="clear" value="Clear">
+          <Button
+            variant="link"
+            isInline
+            onClick={() => {
+              onClear('dataCollector');
+              onClear('systemUpdateMethod');
+              onClear('group');
+              setIsFilterDropdownOpen(false);
+            }}
+          >
+            Clear
+          </Button>
+        </MenuFooter>
         <SelectGroup label="Data Collector">
-          <SelectList>
-            {dataCollectorMenuItems}
-          </SelectList>
+          <SelectList>{dataCollectorMenuItems}</SelectList>
         </SelectGroup>
         <Divider />
         <SelectGroup label="System Update Method">
-          <SelectList>
-            {systemUpdateMethodMenuItems}
-          </SelectList>
+          <SelectList>{systemUpdateMethodMenuItems}</SelectList>
         </SelectGroup>
         <Divider />
         <SelectGroup label="Group">
-          <SelectList>
-            {groupMenuItems}
-          </SelectList>
+          <SelectList>{groupMenuItems}</SelectList>
         </SelectGroup>
-      </>
+      </>,
     ];
 
     // Helper functions for tree
@@ -634,6 +734,18 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           width: '400px',
         }}
       >
+        <PanelHeader key="clear" value="Clear">
+          <Button
+            variant="link"
+            isInline
+            onClick={() => {
+              onClear('Operating system');
+              setIsOSDropdownOpen(false);
+            }}
+          >
+            Clear
+          </Button>
+        </PanelHeader>
         <PanelMain>
           <section>
             <PanelMainBody style={{ padding: 0 }}>
@@ -679,7 +791,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       <React.Fragment>
         <ToolbarFilter
           // chips={filters.status}
-          deleteChip={(_category, chip) => onDelete('status', chip as string)}
+          // deleteChip={(_category, chip) => onDelete('status', chip as string)}
           categoryName="Status"
         >
           <Select
@@ -710,7 +822,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           // chips={filters.operatingSystem}
-          deleteChip={(_category, chip) => onDelete('operatingSystem', chip as string)}
+          // deleteChip={(_category, chip) => onDelete('operatingSystem', chip as string)}
           categoryName="Operating system"
         >
           <MenuContainer
@@ -725,7 +837,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           // chips={filters.tags}
-          deleteChip={(_category, chip) => onDelete('tags', chip as string)}
+          // deleteChip={(_category, chip) => onDelete('tags', chip as string)}
           categoryName="Tags"
         >
           <MenuContainer
@@ -740,7 +852,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           // chips={filters.rhcStatus}
-          deleteChip={(_category, chip) => onDelete('rhcStatus', chip as string)}
+          // deleteChip={(_category, chip) => onDelete('rhcStatus', chip as string)}
           categoryName="RHC status"
         >
           <Select
@@ -771,7 +883,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           // chips={filters.lastSeen}
-          deleteChip={(_category, chip) => onDelete('Last seen', chip as string)}
+          // deleteChip={(_category, chip) => onDelete('Last seen', chip as string)}
           categoryName="Last seen"
         >
           <Select
@@ -803,15 +915,15 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
 
         <ToolbarFilter
           // chips={filters.group}
-          deleteChip={(_category, chip) => onDelete('group', chip as string)}
-          categoryName="Group"
+          // deleteChip={(_category, chip) => onDelete('group', chip as string)}
+          categoryName="More filter options"
         >
           <Select
-            aria-label="Group"
+            aria-label="More filter options menu"
             isOpen={isFilterDropdownOpen}
             onOpenChange={(isFilterDropdownOpen) => setIsFilterDropdownOpen(isFilterDropdownOpen)}
-            onSelect={onGroupSelect}
-            selected={filters.status}
+            onSelect={onMoreFilterOptionsSelect}
+            selected={[...filters.dataCollector, ...filters.systemUpdateMethod, ...filters.group]}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
               <MenuToggle
                 ref={toggleRef}
@@ -825,7 +937,11 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                 }
               >
                 <FilterIcon />
-                {filters.group.length > 0 && <Badge isRead>{filters.group.length}</Badge>}
+                {filters.group.length + filters.dataCollector.length + filters.systemUpdateMethod.length > 0 && (
+                  <Badge isRead>
+                    {filters.group.length + filters.dataCollector.length + filters.systemUpdateMethod.length}
+                  </Badge>
+                )}
               </MenuToggle>
             )}
           >
@@ -837,11 +953,11 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   };
 
   const firstRow = (
-    <Toolbar clearAllFilters={onDelete}>
+    <Toolbar>
       <ToolbarContent>
         <ToolbarFilter
           // chips={filters.name}
-          deleteChip={(_category, chip) => onDelete('name', chip as string)}
+          // deleteChip={(_category, chip) => onDelete('name', chip as string)}
           categoryName="Name"
         >
           <SearchInput
@@ -863,7 +979,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     return (
       <React.Fragment>
         {firstRow}
-        <Toolbar id="toolbar-with-chip-groups" clearAllFilters={onDelete} collapseListedFiltersBreakpoint="xl">
+        <Toolbar id="toolbar-with-chip-groups" collapseListedFiltersBreakpoint="xl">
           <ToolbarContent>
             <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
               <ToolbarGroup
@@ -885,73 +1001,30 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     );
   };
 
-  const filteredRows =
-    (filters.name.length ||
-      filters.status.length ||
-      filters.dataCollector.length ||
-      filters.rhcStatus.length ||
-      filters.tags.length ||
-      filters.operatingSystem.length ||
-      filters.group.length ||
-      filters.systemUpdateMethod.length) > 0
-      ? rows.filter((row) => {
-          return (
-            (filters.name.length === 0 ||
-              filters.name.some((name) => row.name.toLowerCase().includes(name.toLowerCase()))) &&
-            (filters.status.length === 0 || filters.status.includes(row.status)) &&
-            (filters.dataCollector.length === 0 || filters.dataCollector.includes(row.dataCollector)) &&
-            (filters.rhcStatus.length === 0 || filters.rhcStatus.includes(row.rhcStatus)) &&
-            (filters.tags.length === 0 || filters.tags.includes(row.tags)) &&
-            (filters.systemUpdateMethod.length === 0 || filters.systemUpdateMethod.includes(row.systemUpdateMethod)) &&
-            (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem)) &&
-            (filters.group.length === 0 || filters.group.includes(row.group))
-          );
-        })
-      : rows;
 
-  // console.log('WEEEE', filteredRows);
 
-  console.log('FILERS.OPERATINGSYSTEM', filters.operatingSystem);
+  console.log('FILTERS', filters);
 
   let filteredTableRows = filteredRows;
-  if (filteredRows.length === 0) {
-    const emptyStateTable = [
-      {
-        heightAuto: true,
-        cells: [
-          {
-            props: { colSpan: 8 },
-            title: (
-              <Bullseye>
-                <EmptyState>
-                  <EmptyStateHeader
-                    titleText="Clear all filters and try again."
-                    headingLevel="h5"
-                    icon={<EmptyStateIcon icon={SearchIcon} />}
-                  />
-                  <EmptyStateBody>
-                    No results match this filter criteria. Remove all filters or clear all filters to show results.
-                  </EmptyStateBody>
-                  <EmptyStateFooter>
-                    <EmptyStateActions>
-                      <Button
-                        variant="link"
-                        onClick={() => {
-                          onDelete(null);
-                        }}
-                      >
-                        Clear all filters
-                      </Button>
-                    </EmptyStateActions>
-                  </EmptyStateFooter>
-                </EmptyState>
-              </Bullseye>
-            ),
-          },
-        ],
-      },
-    ];
-  }
+  const renderEmptyStateTable = () => {
+    <Td colSpan={8}>
+      <Bullseye>
+        <EmptyState variant={'sm'}>
+          <EmptyStateHeader
+            icon={<EmptyStateIcon icon={SearchIcon} />}
+            titleText="No results found"
+            headingLevel="h2"
+          />
+          <EmptyStateBody>No results match this filter criteria. Clear all filters and try again.</EmptyStateBody>
+          <EmptyStateFooter>
+            <EmptyStateActions>
+              <Button variant="link">Clear all filters</Button>
+            </EmptyStateActions>
+          </EmptyStateFooter>
+        </EmptyState>
+      </Bullseye>
+    </Td>;
+  };
 
   // console.log('FILTERED ROWS', filteredRows);
 
@@ -969,17 +1042,54 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {/* todo: slice to 10 and implement pagination */}
-            {filteredRows.slice(0, 20).map((row, rowIndex) => (
-              <Tr key={rowIndex}>
-                <>
-                  <Td dataLabel={columns[0]}>{row.name}</Td>
-                  <Td dataLabel={columns[1]}>{row.operatingSystem}</Td>
-                  <Td dataLabel={columns[3]}>{row.tags}</Td>
-                  <Td dataLabel={columns[7]}>{row.lastSeen}</Td>
-                </>
+            {filteredRows.length === 0 ? (
+              <Tr>
+                <Td colSpan={8}>
+                  <Bullseye>
+                    <EmptyState variant={'sm'}>
+                      <EmptyStateHeader
+                        icon={<EmptyStateIcon icon={SearchIcon} />}
+                        titleText="No results found"
+                        headingLevel="h2"
+                      />
+                      <EmptyStateBody>
+                        No results match this filter criteria. Clear all filters and try again.
+                      </EmptyStateBody>
+                      <EmptyStateFooter>
+                        <EmptyStateActions>
+                          <Button
+                            variant="link"
+                            onClick={() => {
+                              onClear('name');
+                              onClear('status');
+                              onClear('operatingSystem');
+                              onClear('tags');
+                              onClear('rhcStatus');
+                              onClear('dataCollector');
+                              onClear('systemUpdateMethod');
+                              onClear('groups');
+                            }}
+                          >
+                            Clear all filters
+                          </Button>
+                        </EmptyStateActions>
+                      </EmptyStateFooter>
+                    </EmptyState>
+                  </Bullseye>
+                </Td>
               </Tr>
-            ))}
+            ) : (
+              filteredRows.map((row, rowIndex) => (
+                <Tr key={rowIndex}>
+                  <>
+                    <Td dataLabel={columns[0]}>{row.name}</Td>
+                    <Td dataLabel={columns[1]}>{row.operatingSystem}</Td>
+                    <Td dataLabel={columns[3]}>{row.tags}</Td>
+                    <Td dataLabel={columns[7]}>{row.lastSeen}</Td>
+                  </>
+                </Tr>
+              ))
+            )}
           </Tbody>
         </Table>
       </PageSection>

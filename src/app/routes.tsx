@@ -41,25 +41,6 @@ const routes: AppRouteConfig[] = [
     path: '/support',
     title: 'PatternFly Seed | Support Page',
   },
-  {
-    label: 'Settings',
-    routes: [
-      {
-        component: GeneralSettings,
-        exact: true,
-        label: 'General',
-        path: '/settings/general',
-        title: 'PatternFly Seed | General Settings',
-      },
-      {
-        component: ProfileSettings,
-        exact: true,
-        label: 'Profile',
-        path: '/settings/profile',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-    ],
-  },
 ];
 
 // a custom hook for sending focus to the primary content container
