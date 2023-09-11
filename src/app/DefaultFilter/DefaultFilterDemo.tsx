@@ -1,51 +1,49 @@
 import React from 'react';
 import {
   Badge,
-  Button,
   Bullseye,
+  Button,
   EmptyState,
   EmptyStateActions,
   EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateHeader,
   EmptyStateFooter,
-  Label,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  MenuContainer,
   MenuToggle,
   MenuToggleElement,
-  Toolbar,
-  ToolbarItem,
-  ToolbarContent,
-  ToolbarFilter,
-  ToolbarToggleGroup,
-  ToolbarGroup,
-  Title,
-  Select,
-  SelectOption,
-  SearchInput,
   PageSection,
-  MenuContainer,
+  Pagination,
   Panel,
   PanelMain,
   PanelMainBody,
+  SearchInput,
+  Select,
+  SelectOption,
+  Toolbar,
+  ToolbarContent,
+  ToolbarFilter,
+  ToolbarGroup,
+  ToolbarItem,
+  ToolbarToggleGroup,
   TreeView,
   TreeViewDataItem,
-  Pagination,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
-import { Table, TableText, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { columns, rows } from '../data';
 
 export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [filters, setFilters] = React.useState<{
     name: string[];
     status: string[];
-    operatingSystem: TreeView[];
+    operatingSystem: string[];
     dataCollector: string[];
     rhcStatus: string[];
     systemUpdateMethod: string[];
     lastSeen: string[];
-    tags: string[];
+    tags: TreeViewDataItem[];
     group: string[];
   }>({
     name: [],
@@ -61,9 +59,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [currentCategory, setCurrentCategory] = React.useState('Name');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = React.useState(false);
-  const [nameInput, setNameInput] = React.useState('');
   const [inputValue, setInputValue] = React.useState('');
-  const [tableRows, setTableRows] = React.useState(rows.slice(0, 10));
   const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
   const osToggleRef = React.useRef<HTMLButtonElement>(null);
   const osMenuRef = React.useRef<HTMLDivElement>();
@@ -72,16 +68,15 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [checkedItems, setCheckedItems] = React.useState<TreeViewDataItem[]>([]);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-  // console.log('filters', filters);
-
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(10);
+
   const handleSetPage = (_evt, newPage, _perPage, startIdx, endIdx) => {
-    setPaginatedRows(rows.slice(startIdx, endIdx));
+    setPaginatedRows(filteredRows.slice(startIdx, endIdx));
     setPage(newPage);
   };
   const handlePerPageSelect = (_evt, newPerPage, newPage, startIdx, endIdx) => {
-    setPaginatedRows(rows.slice(startIdx, endIdx));
+    setPaginatedRows(filteredRows.slice(startIdx, endIdx));
     setPage(newPage);
     setPerPage(newPerPage);
   };
@@ -89,7 +84,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   const buildPagination = (variant, isCompact) => (
     <Pagination
       isCompact={isCompact}
-      itemCount={rows.length}
+      itemCount={filteredRows.length}
       page={page}
       perPage={perPage}
       onSetPage={handleSetPage}
@@ -102,13 +97,12 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   );
 
   const onDelete = (type = '', id = '') => {
-    console.log('ID', id);
-    console.log('type', type);
     if (type) {
+      if (type === 'operatingSystem' || type === 'tags') {
+        setCheckedItems([]);
+      }
       const copyOfChips = filters[type];
-      console.log('yum chips', copyOfChips);
-      const filteredCopy = copyOfChips.filter((chip) => chip !== id);
-      console.log('COPY', filteredCopy);
+      const filteredCopy = copyOfChips.filter((chip: string) => chip !== id);
       setFilters({
         ...filters,
         [type]: filteredCopy,
@@ -125,7 +119,15 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         tags: [],
         group: [],
       });
+      setCheckedItems([]);
     }
+  };
+
+  const onDeleteGroup = (type: string) => {
+    setFilters({
+      ...filters,
+      [type]: [],
+    });
   };
 
   const onCategoryToggle = () => {
@@ -133,16 +135,11 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   };
 
   const onCategorySelect = (event) => {
-    // console.log('HEY', event.target.innerText);
     setCurrentCategory(event.target.innerText);
     setIsCategoryDropdownOpen(false);
   };
 
   const onFilterToggle = () => {
-    setIsFilterDropdownOpen(!isFilterDropdownOpen);
-  };
-
-  const onFilterSelect = () => {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
 
@@ -166,17 +163,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       status: checked
         ? [...filters.status, selection]
         : Object.values(filters.status).filter((value) => value !== selection),
-    });
-    setIsFilterDropdownOpen(false);
-  };
-
-  const onOSSelect = (event, selection) => {
-    const checked = event.target.checked;
-    setFilters({
-      ...filters,
-      operatingSystem: checked
-        ? [...filters.operatingSystem, selection]
-        : Object.values(filters.operatingSystem).filter((value) => value !== selection),
     });
     setIsFilterDropdownOpen(false);
   };
@@ -214,7 +200,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
 
   const onDataCollectorSelect = (event, selection) => {
     const checked = event.target.checked;
-    // console.log(selection);
     setFilters({
       ...filters,
       dataCollector: checked
@@ -255,10 +240,10 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       <SelectOption key="cat6" value="System update method">
         System update method
       </SelectOption>,
-      <SelectOption key="cat7" value="Last seen">
+      <SelectOption isDisabled key="cat7" value="Last seen">
         Last seen
       </SelectOption>,
-      <SelectOption key="cat8" value="Tags">
+      <SelectOption isDisabled key="cat8" value="Tags">
         Tags
       </SelectOption>,
       <SelectOption key="cat9" value="Group">
@@ -625,19 +610,10 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       const checked = (evt.target as HTMLInputElement).checked;
 
       let options: TreeViewDataItem[] = [];
-      console.log(treeViewItem);
 
-      options = osOptions;
-
-      console.log(Object.values(filters.operatingSystem).filter((value) => value !== treeViewItem.name));
-
-      setFilters({
-        ...filters,
-        operatingSystem: checked
-          ? [...filters.operatingSystem, treeViewItem.name]
-          : Object.values(filters.operatingSystem).filter((value) => value !== treeViewItem.name),
-      });
-      setIsFilterDropdownOpen(false);
+      if (treeType === 'operatingSystem') {
+        options = osOptions;
+      } else options = tagsOptions;
 
       const checkedItemTree = options
         .map((opt) => Object.assign({}, opt))
@@ -648,6 +624,11 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
           ? prevCheckedItems.concat(flatCheckedItems.filter((item) => !prevCheckedItems.some((i) => i.id === item.id)))
           : prevCheckedItems.filter((item) => !flatCheckedItems.some((i) => i.id === item.id)),
       );
+
+      setFilters({
+        ...filters,
+        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)]
+      });
     };
 
     const OSmenu = (
@@ -663,7 +644,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
             <PanelMainBody style={{ padding: 0 }}>
               <TreeView
                 data={osMapped}
-                hasBadges
                 defaultAllExpanded
                 hasCheckboxes
                 onCheck={(event, item) => onCheck(event, item, 'operatingSystem')}
@@ -699,11 +679,41 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       </Panel>
     );
 
+    // const onTagsCheck = (evt: React.ChangeEvent, treeViewItem: TreeViewDataItem, treeType: string) => {
+    //   const checked = (evt.target as HTMLInputElement).checked;
+
+    //   let options: TreeViewDataItem[] = [];
+    //   console.log(treeViewItem);
+
+    //   options = tagsOptions;
+
+    //   console.log(Object.values(filters.tags).filter((value) => value !== treeViewItem.name));
+
+    //   setFilters({
+    //     ...filters,
+    //     tags: checked
+    //       ? [...filters.tags, treeViewItem.name]
+    //       : Object.values(filters.tags).filter((value) => value !== treeViewItem.name),
+    //   });
+    //   setIsFilterDropdownOpen(false);
+
+    //   const checkedItemTree = options
+    //     .map((opt) => Object.assign({}, opt))
+    //     .filter((item) => filterItems(item, treeViewItem));
+    //   const flatCheckedItems = flattenTree(checkedItemTree);
+    //   setCheckedItems((prevCheckedItems) =>
+    //     checked
+    //       ? prevCheckedItems.concat(flatCheckedItems.filter((item) => !prevCheckedItems.some((i) => i.id === item.id)))
+    //       : prevCheckedItems.filter((item) => !flatCheckedItems.some((i) => i.id === item.id)),
+    //   );
+    // };
+
     return (
       <React.Fragment>
         <ToolbarFilter
           chips={filters.name}
           deleteChip={(_category, chip) => onDelete('name', chip as string)}
+          deleteChipGroup={() => onDeleteGroup('name')}
           categoryName="Name"
           showToolbarItem={currentCategory === 'Name'}
         >
@@ -721,6 +731,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         <ToolbarFilter
           chips={filters.status}
           deleteChip={(_category, chip) => onDelete('status', chip as string)}
+          deleteChipGroup={() => onDeleteGroup('status')}
           categoryName="Status"
           showToolbarItem={currentCategory === 'Status'}
         >
@@ -752,6 +763,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         <ToolbarFilter
           chips={filters.operatingSystem}
           deleteChip={(_category, chip) => onDelete('operatingSystem', chip as string)}
+          deleteChipGroup={() => onDeleteGroup('operatingSystem')}
           categoryName="Operating system"
           showToolbarItem={currentCategory === 'Operating system'}
         >
@@ -768,6 +780,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         <ToolbarFilter
           chips={filters.dataCollector}
           deleteChip={(_category, chip) => onDelete('dataCollector', chip as string)}
+          deleteChipGroup={() => onDeleteGroup('dataCollector')}
           categoryName="Data collector"
           showToolbarItem={currentCategory === 'Data collector'}
         >
@@ -799,6 +812,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         <ToolbarFilter
           chips={filters.rhcStatus}
           deleteChip={(_category, chip) => onDelete('rhcStatus', chip as string)}
+          deleteChipGroup={() => onDeleteGroup('rhcStatus')}
           categoryName="RHC status"
           showToolbarItem={currentCategory === 'RHC status'}
         >
@@ -830,6 +844,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         <ToolbarFilter
           chips={filters.systemUpdateMethod}
           deleteChip={(_category, chip) => onDelete('systemUpdateMethod', chip as string)}
+          deleteChipGroup={() => onDeleteGroup('systemUpdateMethod')}
           categoryName="System update method"
           showToolbarItem={currentCategory === 'System update method'}
         >
@@ -860,7 +875,8 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.lastSeen}
-          deleteChip={(_category, chip) => onDelete('Last seen', chip as string)}
+          deleteChip={(_category, chip) => onDelete('lastSeen', chip as string)}
+          deleteChipGroup={() => onDeleteGroup('lastSeen')}
           categoryName="Last seen"
           showToolbarItem={currentCategory === 'Last seen'}
         >
@@ -893,6 +909,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         <ToolbarFilter
           chips={filters.tags}
           deleteChip={(_category, chip) => onDelete('tags', chip as string)}
+          deleteChipGroup={() => onDeleteGroup('tags')}
           categoryName="Tags"
           showToolbarItem={currentCategory === 'Tags'}
         >
@@ -909,6 +926,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         <ToolbarFilter
           chips={filters.group}
           deleteChip={(_category, chip) => onDelete('group', chip as string)}
+          deleteChipGroup={() => onDelete('group')}
           categoryName="Group"
           showToolbarItem={currentCategory === 'Group'}
         >
@@ -940,6 +958,8 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       </React.Fragment>
     );
   };
+
+  console.log("FILRERA", filters)
 
   const renderToolbar = () => {
     return (
@@ -989,52 +1009,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         })
       : rows;
 
-  console.log('WEEEE', filters);
-
-  console.log('FILERS.OPERATINGSYSTEM', filters.operatingSystem);
-
-  let filteredTableRows = filteredRows;
-  if (filteredRows.length === 0) {
-    const emptyStateTable = [
-      {
-        heightAuto: true,
-        cells: [
-          {
-            props: { colSpan: 8 },
-            title: (
-              <Bullseye>
-                <EmptyState>
-                  <EmptyStateHeader
-                    titleText="Clear all filters and try again."
-                    headingLevel="h5"
-                    icon={<EmptyStateIcon icon={SearchIcon} />}
-                  />
-                  <EmptyStateBody>
-                    No results match this filter criteria. Remove all filters or clear all filters to show results.
-                  </EmptyStateBody>
-                  <EmptyStateFooter>
-                    <EmptyStateActions>
-                      <Button
-                        variant="link"
-                        onClick={() => {
-                          onDelete(null);
-                        }}
-                      >
-                        Clear all filters
-                      </Button>
-                    </EmptyStateActions>
-                  </EmptyStateFooter>
-                </EmptyState>
-              </Bullseye>
-            ),
-          },
-        ],
-      },
-    ];
-  }
-
-  // console.log('FILTERED ROWS', filteredRows);
-
   return (
     <React.Fragment>
       <PageSection isFilled>
@@ -1049,17 +1023,47 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {/* todo: slice to 10 and implement pagination */}
-            {filteredRows.slice(0, 20).map((row, rowIndex) => (
-              <Tr key={rowIndex}>
-                <>
-                  <Td dataLabel={columns[0]}>{row.name}</Td>
-                  <Td dataLabel={columns[1]}>{row.operatingSystem}</Td>
-                  <Td dataLabel={columns[3]}>{row.tags}</Td>
-                  <Td dataLabel={columns[7]}>{row.lastSeen}</Td>
-                </>
+            {filteredRows.length === 0 ? (
+              <Tr>
+                <Td colSpan={8}>
+                  <Bullseye>
+                    <EmptyState variant={'sm'}>
+                      <EmptyStateHeader
+                        icon={<EmptyStateIcon icon={SearchIcon} />}
+                        titleText="No results found"
+                        headingLevel="h2"
+                      />
+                      <EmptyStateBody>
+                        No results match this filter criteria. Clear all filters and try again.
+                      </EmptyStateBody>
+                      <EmptyStateFooter>
+                        <EmptyStateActions>
+                          <Button
+                            variant="link"
+                            onClick={() => {
+                              onDelete();
+                            }}
+                          >
+                            Clear all filters
+                          </Button>
+                        </EmptyStateActions>
+                      </EmptyStateFooter>
+                    </EmptyState>
+                  </Bullseye>
+                </Td>
               </Tr>
-            ))}
+            ) : (
+              filteredRows.map((row, rowIndex) => (
+                <Tr key={rowIndex}>
+                  <>
+                    <Td dataLabel={columns[0]}>{row.name}</Td>
+                    <Td dataLabel={columns[1]}>{row.operatingSystem}</Td>
+                    <Td dataLabel={columns[3]}>{row.tags}</Td>
+                    <Td dataLabel={columns[7]}>{row.lastSeen}</Td>
+                  </>
+                </Tr>
+              ))
+            )}
           </Tbody>
         </Table>
       </PageSection>

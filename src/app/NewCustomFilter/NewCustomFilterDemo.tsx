@@ -1,54 +1,42 @@
 import React from 'react';
 import {
-  Badge,
-  Button,
   Bullseye,
+  Button,
+  Divider,
   EmptyState,
   EmptyStateActions,
   EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateHeader,
   EmptyStateFooter,
-  Label,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  MenuContainer,
+  MenuFooter,
   MenuToggle,
   MenuToggleElement,
-  Toolbar,
-  ToolbarItem,
-  ToolbarContent,
-  ToolbarFilter,
-  ToolbarToggleGroup,
-  ToolbarGroup,
-  Title,
-  Select,
-  SelectOption,
-  SearchInput,
   PageSection,
-  MenuContainer,
+  Pagination,
   Panel,
+  PanelHeader,
   PanelMain,
   PanelMainBody,
-  TreeView,
-  TreeViewDataItem,
-  Pagination,
-  ButtonVariant,
-  Dropdown,
-  DropdownList,
-  OverflowMenu,
-  OverflowMenuContent,
-  OverflowMenuControl,
-  OverflowMenuGroup,
-  OverflowMenuItem,
-  Divider,
+  SearchInput,
+  Select,
   SelectGroup,
   SelectList,
-  MenuFooter,
-  PanelHeader,
+  SelectOption,
+  Toolbar,
+  ToolbarContent,
+  ToolbarFilter,
+  ToolbarGroup,
+  ToolbarItem,
+  ToolbarToggleGroup,
+  TreeView,
+  TreeViewDataItem,
 } from '@patternfly/react-core';
 import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
-import { Table, TableText, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { columns, rows } from '../data';
-import { EllipsisVIcon } from '@patternfly/react-icons';
 
 export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const [filters, setFilters] = React.useState<{
@@ -59,7 +47,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     rhcStatus: string[];
     systemUpdateMethod: string[];
     lastSeen: string[];
-    tags: string[];
+    tags: TreeView[];
     group: string[];
   }>({
     name: [],
@@ -73,27 +61,20 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     group: [],
   });
 
-  const [currentCategory, setCurrentCategory] = React.useState('Name');
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = React.useState(false);
   const [isOSDropdownOpen, setIsOSDropdownOpen] = React.useState(false);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = React.useState(false);
   const [isRHCStatusDropdownOpen, setIsRHCStatusDropdownOpen] = React.useState(false);
   const [isLastSeenDropdownOpen, setIsLastSeenDropdownOpen] = React.useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
-  const [nameInput, setNameInput] = React.useState('');
   const [inputValue, setInputValue] = React.useState('');
-  const [tableRows, setTableRows] = React.useState(rows.slice(0, 10));
   const osToggleRef = React.useRef<HTMLButtonElement>(null);
-  const tagsToggleRef = React.useRef<HTMLButtonElement>(null);
-
   const osMenuRef = React.useRef<HTMLDivElement>();
+  const tagsToggleRef = React.useRef<HTMLButtonElement>(null);
   const tagsMenuRef = React.useRef<HTMLDivElement>();
 
   const [checkedItems, setCheckedItems] = React.useState<TreeViewDataItem[]>([]);
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
-
-  // console.log('filters', filters);
-
+  const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(10);
   const handleSetPage = (_evt, newPage, _perPage, startIdx, endIdx) => {
@@ -106,36 +87,31 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     setPerPage(newPerPage);
   };
 
-  const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
+  const moreFiltersLength = filters.group.length + filters.dataCollector.length + filters.systemUpdateMethod.length;
 
   const filteredRows =
-  (filters.name.length ||
-    filters.status.length ||
-    filters.dataCollector.length ||
-    filters.rhcStatus.length ||
-    filters.tags.length ||
-    filters.operatingSystem.length ||
-    filters.group.length ||
-    filters.systemUpdateMethod.length) > 0
-    ? rows.filter((row) => {
-        return (
-          (filters.name.length === 0 ||
-            filters.name.some((name) => row.name.toLowerCase().includes(name.toLowerCase()))) &&
-          (filters.status.length === 0 || filters.status.includes(row.status)) &&
-          (filters.dataCollector.length === 0 || filters.dataCollector.includes(row.dataCollector)) &&
-          (filters.rhcStatus.length === 0 || filters.rhcStatus.includes(row.rhcStatus)) &&
-          (filters.tags.length === 0 || filters.tags.includes(row.tags)) &&
-          (filters.systemUpdateMethod.length === 0 || filters.systemUpdateMethod.includes(row.systemUpdateMethod)) &&
-          (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem)) &&
-          (filters.group.length === 0 || filters.group.includes(row.group))
-        );
-      })
-    : rows;
-
-
-
-    console.log("WHAT", paginatedRows)
-    console.log("WHARWASDT", filteredRows)
+    (filters.name.length ||
+      filters.status.length ||
+      filters.dataCollector.length ||
+      filters.rhcStatus.length ||
+      filters.tags.length ||
+      filters.operatingSystem.length ||
+      filters.group.length ||
+      filters.systemUpdateMethod.length) > 0
+      ? rows.filter((row) => {
+          return (
+            (filters.name.length === 0 ||
+              filters.name.some((name) => row.name.toLowerCase().includes(name.toLowerCase()))) &&
+            (filters.status.length === 0 || filters.status.includes(row.status)) &&
+            (filters.dataCollector.length === 0 || filters.dataCollector.includes(row.dataCollector)) &&
+            (filters.rhcStatus.length === 0 || filters.rhcStatus.includes(row.rhcStatus)) &&
+            (filters.tags.length === 0 || filters.tags.includes(row.tags)) &&
+            (filters.systemUpdateMethod.length === 0 || filters.systemUpdateMethod.includes(row.systemUpdateMethod)) &&
+            (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem)) &&
+            (filters.group.length === 0 || filters.group.includes(row.group))
+          );
+        })
+      : rows;
 
   const buildPagination = (variant, isCompact) => (
     <Pagination
@@ -153,18 +129,35 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   );
 
   const onClear = (type = '', id = '') => {
-    console.log('ID', id);
-    console.log('type', type);
+    if (type) {
+      if (type === 'operatingSystem' || type === 'tags') {
+        setCheckedItems([]);
+      }
+      setFilters({
+        ...filters,
+        [type]: [],
+      });
+    } else {
+      setFilters({
+        name: [],
+        status: [],
+        operatingSystem: [],
+        dataCollector: [],
+        rhcStatus: [],
+        systemUpdateMethod: [],
+        lastSeen: [],
+        tags: [],
+        group: [],
+      });
+      setCheckedItems([]);
+    }
+  };
 
+  const onClearMoreFilters = () => {
     setFilters({
-      name: [],
-      status: [],
-      operatingSystem: [],
+      ...filters,
       dataCollector: [],
-      rhcStatus: [],
       systemUpdateMethod: [],
-      lastSeen: [],
-      tags: [],
       group: [],
     });
   };
@@ -245,24 +238,8 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     // setIsLastSeenDropdownOpen(false);
   };
 
-  const onDataCollectorSelect = (event, selection) => {
-    const checked = event.target.checked;
-    console.log(selection);
-    setFilters({
-      ...filters,
-      dataCollector: checked
-        ? [...filters.dataCollector, selection]
-        : Object.values(filters).filter((value) => value !== selection),
-    });
-    setIsFilterDropdownOpen(false);
-  };
-
   const onMoreFilterOptionsSelect = (event, selection) => {
     const checked = event.target.checked;
-
-    console.log('event target', event);
-
-    console.log('ooooo', selection);
 
     const dataCollectorSelection =
       selection === 'insights-clients' ||
@@ -278,12 +255,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       selection === 'Staging' ||
       selection === 'Preview' ||
       selection === 'Security';
-
-    console.log(dataCollectorSelection);
-
-    console.log(systemUpdateMethodSelection);
-
-    console.log(groupSelection);
 
     if (dataCollectorSelection) {
       setFilters({
@@ -315,7 +286,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     const osOptions: TreeViewDataItem[] = [
       {
         name: 'RHEL 9',
-        id: 'ready',
+        id: 'RHEL 9',
         checkProps: { checked: false },
         children: [
           {
@@ -370,7 +341,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           variant="link"
           isInline
           onClick={() => {
-            onClear('Status');
+            onClear('status');
             setIsStatusDropdownOpen(false);
           }}
         >
@@ -547,9 +518,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
             variant="link"
             isInline
             onClick={() => {
-              onClear('dataCollector');
-              onClear('systemUpdateMethod');
-              onClear('group');
+              onClearMoreFilters();
               setIsFilterDropdownOpen(false);
             }}
           >
@@ -621,16 +590,19 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     };
 
     const OSToggle = (
-      <MenuToggle ref={osToggleRef} onClick={onOSToggleClick} isExpanded={isOSDropdownOpen}>
-        {'Operating system'}
-        {filters.operatingSystem.length > 0 && <Badge isRead>{filters.operatingSystem.length}</Badge>}
+      <MenuToggle
+        style={{ color: filters.operatingSystem.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined }}
+        ref={osToggleRef}
+        onClick={onOSToggleClick}
+        isExpanded={isOSDropdownOpen}
+      >
+        Operating system {filters.operatingSystem.length > 0 ? `(${filters.operatingSystem.length - 1})` : ''}
       </MenuToggle>
     );
 
     const tagsToggle = (
-      <MenuToggle ref={tagsToggleRef} onClick={onTagsToggleClick} isExpanded={isTagsDropdownOpen}>
-        {'Tags'}
-        {filters.tags.length > 0 && <Badge isRead>{filters.tags.length}</Badge>}
+      <MenuToggle isDisabled ref={tagsToggleRef} onClick={onTagsToggleClick} isExpanded={isTagsDropdownOpen}>
+        Tags {filters.tags.length > 0 ? `(${filters.tags.length})` : ''}
       </MenuToggle>
     );
 
@@ -644,17 +616,17 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         children: [
           {
             name: 'North America',
-            id: 'RHEL_9.3',
+            id: 'northAmerica',
             checkProps: { checked: false },
           },
           {
             name: 'South America',
-            id: 'RHEL_9.2',
+            id: 'southAmerica',
             checkProps: { checked: false },
           },
           {
             name: 'Asia',
-            id: 'RHEL_9.1',
+            id: 'asia',
             checkProps: { checked: false },
           },
         ],
@@ -701,19 +673,8 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       const checked = (evt.target as HTMLInputElement).checked;
 
       let options: TreeViewDataItem[] = [];
-      console.log(treeViewItem);
 
       options = osOptions;
-
-      console.log(Object.values(filters.operatingSystem).filter((value) => value !== treeViewItem.name));
-
-      setFilters({
-        ...filters,
-        operatingSystem: checked
-          ? [...filters.operatingSystem, treeViewItem.name]
-          : Object.values(filters.operatingSystem).filter((value) => value !== treeViewItem.name),
-      });
-      // setIsFilterDropdownOpen(false);
 
       const checkedItemTree = options
         .map((opt) => Object.assign({}, opt))
@@ -724,6 +685,11 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           ? prevCheckedItems.concat(flatCheckedItems.filter((item) => !prevCheckedItems.some((i) => i.id === item.id)))
           : prevCheckedItems.filter((item) => !flatCheckedItems.some((i) => i.id === item.id)),
       );
+
+      setFilters({
+        ...filters,
+        operatingSystem: [...flatCheckedItems.map((i) => i.name)],
+      });
     };
 
     const osMenu = (
@@ -739,7 +705,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
             variant="link"
             isInline
             onClick={() => {
-              onClear('Operating system');
+              onClear('operatingSystem');
               setIsOSDropdownOpen(false);
             }}
           >
@@ -751,7 +717,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
             <PanelMainBody style={{ padding: 0 }}>
               <TreeView
                 data={osMapped}
-                hasBadges
                 defaultAllExpanded
                 hasCheckboxes
                 onCheck={(event, item) => onCheck(event, item, 'operatingSystem')}
@@ -809,11 +774,11 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                   {
                     width: '100%',
                     verticalAlign: 'text-bottom',
+                    color: filters.status.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
                   } as React.CSSProperties
                 }
               >
-                Status
-                {filters.status.length > 0 && <Badge isRead>{filters.status.length}</Badge>}
+                Status {filters.status.length > 0 ? `(${filters.status.length})` : ''}
               </MenuToggle>
             )}
           >
@@ -836,8 +801,8 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           />
         </ToolbarFilter>
         <ToolbarFilter
-          // chips={filters.tags}
-          // deleteChip={(_category, chip) => onDelete('tags', chip as string)}
+          // chips={filters.operatingSystem}
+          // deleteChip={(_category, chip) => onDelete('operatingSystem', chip as string)}
           categoryName="Tags"
         >
           <MenuContainer
@@ -870,11 +835,11 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                   {
                     width: '100%',
                     verticalAlign: 'text-bottom',
+                    color: filters.rhcStatus.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
                   } as React.CSSProperties
                 }
               >
-                RHC status
-                {filters.rhcStatus.length > 0 && <Badge isRead>{filters.rhcStatus.length}</Badge>}
+                RHC status {filters.rhcStatus.length > 0 ? `(${filters.rhcStatus.length})` : ''}
               </MenuToggle>
             )}
           >
@@ -904,8 +869,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                   } as React.CSSProperties
                 }
               >
-                Last seen
-                {filters.lastSeen.length > 0 && <Badge isRead>{filters.lastSeen.length}</Badge>}
+                Last seen {filters.lastSeen.length > 0 ? `(${filters.lastSeen.length})` : ''}
               </MenuToggle>
             )}
           >
@@ -933,15 +897,12 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                   {
                     width: '100%',
                     verticalAlign: 'text-bottom',
+                    color: moreFiltersLength > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
                   } as React.CSSProperties
                 }
               >
                 <FilterIcon />
-                {filters.group.length + filters.dataCollector.length + filters.systemUpdateMethod.length > 0 && (
-                  <Badge isRead>
-                    {filters.group.length + filters.dataCollector.length + filters.systemUpdateMethod.length}
-                  </Badge>
-                )}
+                {moreFiltersLength > 0 ? `(${moreFiltersLength})` : ''}
               </MenuToggle>
             )}
           >
@@ -953,13 +914,9 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   };
 
   const firstRow = (
-    <Toolbar>
+    <Toolbar clearAllFilters={onClear}>
       <ToolbarContent>
-        <ToolbarFilter
-          // chips={filters.name}
-          // deleteChip={(_category, chip) => onDelete('name', chip as string)}
-          categoryName="Name"
-        >
+        <ToolbarFilter chips={filters.name} deleteChip={() => onClear('name')} categoryName="Name">
           <SearchInput
             aria-label="name filter"
             placeholder="Filter by name..."
@@ -1001,33 +958,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     );
   };
 
-
-
-  console.log('FILTERS', filters);
-
-  let filteredTableRows = filteredRows;
-  const renderEmptyStateTable = () => {
-    <Td colSpan={8}>
-      <Bullseye>
-        <EmptyState variant={'sm'}>
-          <EmptyStateHeader
-            icon={<EmptyStateIcon icon={SearchIcon} />}
-            titleText="No results found"
-            headingLevel="h2"
-          />
-          <EmptyStateBody>No results match this filter criteria. Clear all filters and try again.</EmptyStateBody>
-          <EmptyStateFooter>
-            <EmptyStateActions>
-              <Button variant="link">Clear all filters</Button>
-            </EmptyStateActions>
-          </EmptyStateFooter>
-        </EmptyState>
-      </Bullseye>
-    </Td>;
-  };
-
-  // console.log('FILTERED ROWS', filteredRows);
-
   return (
     <React.Fragment>
       <PageSection isFilled>
@@ -1060,14 +990,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                           <Button
                             variant="link"
                             onClick={() => {
-                              onClear('name');
-                              onClear('status');
-                              onClear('operatingSystem');
-                              onClear('tags');
-                              onClear('rhcStatus');
-                              onClear('dataCollector');
-                              onClear('systemUpdateMethod');
-                              onClear('groups');
+                              onClear();
                             }}
                           >
                             Clear all filters
