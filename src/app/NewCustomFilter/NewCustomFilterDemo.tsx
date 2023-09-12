@@ -74,7 +74,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const tagsMenuRef = React.useRef<HTMLDivElement>();
 
   const [checkedItems, setCheckedItems] = React.useState<TreeViewDataItem[]>([]);
-  const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(10);
   const handleSetPage = (_evt, newPage, _perPage, startIdx, endIdx) => {
@@ -112,6 +111,15 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           );
         })
       : rows;
+
+  const [paginatedRows, setPaginatedRows] = React.useState(
+    filteredRows.slice((page - 1) * perPage, page * perPage - 1),
+  );
+  // setPaginatedRows(filteredRows);
+
+  React.useEffect(() => {
+    setPaginatedRows(filteredRows.slice((page - 1) * perPage, page * perPage - 1));
+  }, [filteredRows, page, perPage]);
 
   const buildPagination = (variant, isCompact) => (
     <Pagination
@@ -191,7 +199,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         ? [...filters.status, selection]
         : Object.values(filters.status).filter((value) => value !== selection),
     });
-    // TODO: remove these ? setIsStatusDropdownOpen(false);
   };
 
   const onOSSelect = (event, selection) => {
@@ -688,7 +695,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
 
       setFilters({
         ...filters,
-        operatingSystem: [...flatCheckedItems.map((i) => i.name)],
+        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)],
       });
     };
 
@@ -1002,7 +1009,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                 </Td>
               </Tr>
             ) : (
-              filteredRows.map((row, rowIndex) => (
+              paginatedRows.map((row, rowIndex) => (
                 <Tr key={rowIndex}>
                   <>
                     <Td dataLabel={columns[0]}>{row.name}</Td>

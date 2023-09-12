@@ -60,7 +60,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
-  const [paginatedRows, setPaginatedRows] = React.useState(rows.slice(0, 10));
   const osToggleRef = React.useRef<HTMLButtonElement>(null);
   const osMenuRef = React.useRef<HTMLDivElement>();
   const tagsToggleRef = React.useRef<HTMLButtonElement>(null);
@@ -627,7 +626,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
 
       setFilters({
         ...filters,
-        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)]
+        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)],
       });
     };
 
@@ -926,7 +925,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         <ToolbarFilter
           chips={filters.group}
           deleteChip={(_category, chip) => onDelete('group', chip as string)}
-          deleteChipGroup={() => onDelete('group')}
+          deleteChipGroup={() => onDeleteGroup('group')}
           categoryName="Group"
           showToolbarItem={currentCategory === 'Group'}
         >
@@ -959,7 +958,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     );
   };
 
-  console.log("FILRERA", filters)
+  console.log('FILRERA', filters);
 
   const renderToolbar = () => {
     return (
@@ -1009,6 +1008,14 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         })
       : rows;
 
+  const [paginatedRows, setPaginatedRows] = React.useState(
+    filteredRows.slice((page - 1) * perPage, page * perPage - 1),
+  );
+
+  React.useEffect(() => {
+    setPaginatedRows(filteredRows.slice((page - 1) * perPage, page * perPage - 1));
+  }, [filteredRows, page, perPage]);
+
   return (
     <React.Fragment>
       <PageSection isFilled>
@@ -1053,7 +1060,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                 </Td>
               </Tr>
             ) : (
-              filteredRows.map((row, rowIndex) => (
+              paginatedRows.map((row, rowIndex) => (
                 <Tr key={rowIndex}>
                   <>
                     <Td dataLabel={columns[0]}>{row.name}</Td>
