@@ -43,7 +43,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     rhcStatus: string[];
     systemUpdateMethod: string[];
     lastSeen: string[];
-    tags: TreeViewDataItem[];
+    tags: string[];
     group: string[];
   }>({
     name: [],
@@ -626,7 +626,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
 
       setFilters({
         ...filters,
-        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)],
+        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)] as string[],
       });
     };
 

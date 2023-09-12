@@ -42,12 +42,12 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const [filters, setFilters] = React.useState<{
     name: string[];
     status: string[];
-    operatingSystem: TreeView[];
+    operatingSystem: string[];
     dataCollector: string[];
     rhcStatus: string[];
     systemUpdateMethod: string[];
     lastSeen: string[];
-    tags: TreeView[];
+    tags: string[];
     group: string[];
   }>({
     name: [],
@@ -65,7 +65,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const [isOSDropdownOpen, setIsOSDropdownOpen] = React.useState(false);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = React.useState(false);
   const [isRHCStatusDropdownOpen, setIsRHCStatusDropdownOpen] = React.useState(false);
-  const [isLastSeenDropdownOpen, setIsLastSeenDropdownOpen] = React.useState(false);
+  // const [isLastSeenDropdownOpen, setIsLastSeenDropdownOpen] = React.useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
   const osToggleRef = React.useRef<HTMLButtonElement>(null);
@@ -136,7 +136,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     />
   );
 
-  const onClear = (type = '', id = '') => {
+  const onClear = (type = '') => {
     if (type) {
       if (type === 'operatingSystem' || type === 'tags') {
         setCheckedItems([]);
@@ -650,7 +650,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       }
     };
 
-    const onCheck = (evt: React.ChangeEvent, treeViewItem: TreeViewDataItem, treeType: string) => {
+    const onCheck = (evt: React.ChangeEvent, treeViewItem: TreeViewDataItem) => {
       const checked = (evt.target as HTMLInputElement).checked;
 
       let options: TreeViewDataItem[] = [];
@@ -669,7 +669,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
 
       setFilters({
         ...filters,
-        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)],
+        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)] as string[],
       });
     };
 
@@ -700,7 +700,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                 data={osMapped}
                 defaultAllExpanded
                 hasCheckboxes
-                onCheck={(event, item) => onCheck(event, item, 'operatingSystem')}
+                onCheck={(event, item) => onCheck(event, item)}
               />
             </PanelMainBody>
           </section>
@@ -725,7 +725,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                 defaultAllExpanded
                 hasBadges
                 hasCheckboxes
-                onCheck={(event, item) => onCheck(event, item, 'tags')}
+                onCheck={(event, item) => onCheck(event, item)}
               />
             </PanelMainBody>
           </section>
@@ -834,7 +834,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         >
           <Select
             aria-label="Last seen"
-            isOpen={isLastSeenDropdownOpen}
+            isOpen={false}
             onSelect={onLastSeenSelect}
             selected={filters.lastSeen}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
