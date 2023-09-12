@@ -174,10 +174,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     setIsFilterDropdownOpen(!isFilterDropdownOpen);
   };
 
-  const onFilterSelect = () => {
-    setIsFilterDropdownOpen(!isFilterDropdownOpen);
-  };
-
   const onInputChange = (newValue) => {
     setInputValue(newValue);
   };
@@ -199,28 +195,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         ? [...filters.status, selection]
         : Object.values(filters.status).filter((value) => value !== selection),
     });
-  };
-
-  const onOSSelect = (event, selection) => {
-    const checked = event.target.checked;
-    setFilters({
-      ...filters,
-      operatingSystem: checked
-        ? [...filters.operatingSystem, selection]
-        : Object.values(filters.operatingSystem).filter((value) => value !== selection),
-    });
-    // setIsOSDropdownOpen(false);
-  };
-
-  const onSystemUpdateMethodSelect = (event, selection) => {
-    const checked = event.target.checked;
-    setFilters({
-      ...filters,
-      systemUpdateMethod: checked
-        ? [...filters.systemUpdateMethod, selection]
-        : Object.values(filters.systemUpdateMethod).filter((value) => value !== selection),
-    });
-    // setIsFilterDropdownOpen(false);
   };
 
   const onRHCStatusSelect = (event, selection) => {
