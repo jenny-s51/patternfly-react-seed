@@ -9,6 +9,8 @@ import {
   EmptyStateFooter,
   EmptyStateHeader,
   EmptyStateIcon,
+  Flex,
+  FlexItem,
   MenuContainer,
   MenuFooter,
   MenuToggle,
@@ -37,6 +39,7 @@ import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { columns, rows } from '../data';
+import { TagIcon } from '@patternfly/react-icons';
 
 export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const [filters, setFilters] = React.useState<{
@@ -63,13 +66,12 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
 
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = React.useState(false);
   const [isOSDropdownOpen, setIsOSDropdownOpen] = React.useState(false);
+  const [names, setNames] = React.useState<string[]>([]);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = React.useState(false);
   const [isRHCStatusDropdownOpen, setIsRHCStatusDropdownOpen] = React.useState(false);
-  // const [isLastSeenDropdownOpen, setIsLastSeenDropdownOpen] = React.useState(false);
+  const [isLastSeenDropdownOpen, setIsLastSeenDropdownOpen] = React.useState(false);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
-  const osToggleRef = React.useRef<HTMLButtonElement>(null);
-  const osMenuRef = React.useRef<HTMLDivElement>();
   const tagsToggleRef = React.useRef<HTMLButtonElement>(null);
   const tagsMenuRef = React.useRef<HTMLDivElement>();
 
@@ -104,7 +106,9 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
             (filters.status.length === 0 || filters.status.includes(row.status)) &&
             (filters.dataCollector.length === 0 || filters.dataCollector.includes(row.dataCollector)) &&
             (filters.rhcStatus.length === 0 || filters.rhcStatus.includes(row.rhcStatus)) &&
-            (filters.tags.length === 0 || filters.tags.includes(row.tags)) &&
+            (filters.tags.length === 0 ||
+              filters.tags.includes(row.tags.location) ||
+              filters.tags.includes(row.tags.environment)) &&
             (filters.systemUpdateMethod.length === 0 || filters.systemUpdateMethod.includes(row.systemUpdateMethod)) &&
             (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem)) &&
             (filters.group.length === 0 || filters.group.includes(row.group))
@@ -115,10 +119,10 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   const [paginatedRows, setPaginatedRows] = React.useState(
     filteredRows.slice((page - 1) * perPage, page * perPage - 1),
   );
-  // setPaginatedRows(filteredRows);
 
   React.useEffect(() => {
-    setPaginatedRows(filteredRows.slice((page - 1) * perPage, page * perPage - 1));
+    const filteredRowsCopy = filteredRows;
+    setPaginatedRows(filteredRowsCopy.slice((page - 1) * perPage, page * perPage - 1));
   }, [filteredRows, page, perPage]);
 
   const buildPagination = (variant, isCompact) => (
@@ -126,7 +130,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       isCompact={isCompact}
       itemCount={filteredRows.length}
       page={page}
-      perPage={perPage}
+      perPage={10}
       onSetPage={handleSetPage}
       onPerPageSelect={handlePerPageSelect}
       variant={variant}
@@ -205,18 +209,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         ? [...filters.rhcStatus, selection]
         : Object.values(filters.rhcStatus).filter((value) => value !== selection),
     });
-    // setIsRHCStatusDropdownOpen(false);
-  };
-
-  const onLastSeenSelect = (event, selection) => {
-    const checked = event.target.checked;
-    setFilters({
-      ...filters,
-      lastSeen: checked
-        ? [...filters.lastSeen, selection]
-        : Object.values(filters.lastSeen).filter((value) => value !== selection),
-    });
-    // setIsLastSeenDropdownOpen(false);
   };
 
   const onMoreFilterOptionsSelect = (event, selection) => {
@@ -259,63 +251,9 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           : Object.values(filters.group).filter((value) => value !== selection),
       });
     }
-
-    // setIsFilterDropdownOpen(false);
   };
 
   const buildFilterDropdown = () => {
-    const osOptions: TreeViewDataItem[] = [
-      {
-        name: 'RHEL 9',
-        id: 'RHEL 9',
-        checkProps: { checked: false },
-        children: [
-          {
-            name: 'RHEL 9.3',
-            id: 'RHEL_9.3',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'RHEL 9.2',
-            id: 'RHEL_9.2',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'RHEL 9.1',
-            id: 'RHEL_9.1',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'RHEL 9.0',
-            id: 'RHEL_9.0',
-            checkProps: { checked: false },
-          },
-        ],
-      },
-      {
-        name: 'RHEL 8',
-        id: 'nr',
-        checkProps: { checked: false },
-        children: [
-          {
-            name: 'RHEL 8.9',
-            id: 'RHEL_8.9',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'RHEL 8.8',
-            id: 'RHEL_8.8',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'RHEL 8.7',
-            id: 'RHEL_8.7',
-            checkProps: { checked: false },
-          },
-        ],
-      },
-    ];
-
     const statusMenuItems = [
       <MenuFooter key="clear" value="Clear">
         <Button
@@ -422,6 +360,18 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     ];
 
     const lastSeenMenuItems = [
+      <MenuFooter key="clear" value="Clear">
+        <Button
+          variant="link"
+          isInline
+          onClick={() => {
+            onClear('lastSeen');
+            setIsLastSeenDropdownOpen(false);
+          }}
+        >
+          Clear
+        </Button>
+      </MenuFooter>,
       <SelectOption
         hasCheckbox
         key="within24Hrs"
@@ -562,32 +512,9 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       return item;
     };
 
-    const onOSToggleClick = () => {
-      setIsOSDropdownOpen(!isOSDropdownOpen);
-    };
-
     const onTagsToggleClick = () => {
-      setIsTagsDropdownOpen(!setIsTagsDropdownOpen);
+      setIsTagsDropdownOpen(!isTagsDropdownOpen);
     };
-
-    const OSToggle = (
-      <MenuToggle
-        style={{ color: filters.operatingSystem.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined }}
-        ref={osToggleRef}
-        onClick={onOSToggleClick}
-        isExpanded={isOSDropdownOpen}
-      >
-        Operating system {filters.operatingSystem.length > 0 ? `(${filters.operatingSystem.length - 1})` : ''}
-      </MenuToggle>
-    );
-
-    const tagsToggle = (
-      <MenuToggle isDisabled ref={tagsToggleRef} onClick={onTagsToggleClick} isExpanded={isTagsDropdownOpen}>
-        Tags {filters.tags.length > 0 ? `(${filters.tags.length})` : ''}
-      </MenuToggle>
-    );
-
-    const osMapped = osOptions.map(mapTree);
 
     const tagsOptions: TreeViewDataItem[] = [
       {
@@ -603,6 +530,11 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           {
             name: 'South America',
             id: 'southAmerica',
+            checkProps: { checked: false },
+          },
+          {
+            name: 'Europe',
+            id: 'europe',
             checkProps: { checked: false },
           },
           {
@@ -655,27 +587,42 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
 
       let options: TreeViewDataItem[] = [];
 
-      options = osOptions;
+      options = tagsOptions;
 
       const checkedItemTree = options
         .map((opt) => Object.assign({}, opt))
         .filter((item) => filterItems(item, treeViewItem));
       const flatCheckedItems = flattenTree(checkedItemTree);
+
+      const flatNames = flatCheckedItems.map((item) => item.name);
+      setNames(flatCheckedItems.map((item) => item.name) as string[]);
+
       setCheckedItems((prevCheckedItems) =>
         checked
           ? prevCheckedItems.concat(flatCheckedItems.filter((item) => !prevCheckedItems.some((i) => i.id === item.id)))
           : prevCheckedItems.filter((item) => !flatCheckedItems.some((i) => i.id === item.id)),
       );
 
-      setFilters({
-        ...filters,
-        operatingSystem: [...filters.operatingSystem, ...flatCheckedItems.map((i) => i.name)] as string[],
-      });
+      treeViewItem.name === 'Environment' || treeViewItem.name === 'Location'
+        ? setFilters({
+            ...filters,
+            tags: checked
+              ? [...filters.tags, ...flatNames].filter((i, idx) => [...filters.tags, ...flatNames].indexOf(i) === idx)
+              : Object.values(filters.tags).filter((value) => flatNames.includes(value)),
+          })
+        : setFilters({
+            ...filters,
+            tags: checked
+              ? [...filters.tags, treeViewItem.name]
+              : Object.values(filters.tags).filter((value) => value !== treeViewItem.name),
+          });
     };
 
-    const osMenu = (
+    const tagsMapped = tagsOptions.map(mapTree);
+
+    const tagsMenu = (
       <Panel
-        ref={osMenuRef}
+        ref={tagsMenuRef}
         variant="raised"
         style={{
           width: '400px',
@@ -686,8 +633,8 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
             variant="link"
             isInline
             onClick={() => {
-              onClear('operatingSystem');
-              setIsOSDropdownOpen(false);
+              onClear('tags');
+              setIsTagsDropdownOpen(false);
             }}
           >
             Clear
@@ -697,7 +644,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           <section>
             <PanelMainBody style={{ padding: 0 }}>
               <TreeView
-                data={osMapped}
+                data={tagsMapped}
                 defaultAllExpanded
                 hasCheckboxes
                 onCheck={(event, item) => onCheck(event, item)}
@@ -708,188 +655,144 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       </Panel>
     );
 
-    const tagsMapped = tagsOptions.map(mapTree);
-    const tagsMenu = (
-      <Panel
-        ref={tagsMenuRef}
-        variant="raised"
-        style={{
-          width: '400px',
-        }}
+    const tagsToggle = (
+      <MenuToggle
+        style={{ color: filters.tags.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined }}
+        ref={tagsToggleRef}
+        onClick={onTagsToggleClick}
+        isExpanded={isTagsDropdownOpen}
       >
-        <PanelMain>
-          <section>
-            <PanelMainBody style={{ padding: 0 }}>
-              <TreeView
-                data={tagsMapped}
-                defaultAllExpanded
-                hasBadges
-                hasCheckboxes
-                onCheck={(event, item) => onCheck(event, item)}
-              />
-            </PanelMainBody>
-          </section>
-        </PanelMain>
-      </Panel>
+        {filters.tags.length === 0 && 'Tags'}
+        {filters.tags.length > 1 ? `Tags (${filters.tags.length})` : filters.tags}
+      </MenuToggle>
     );
 
     return (
       <React.Fragment>
-        <ToolbarFilter
-          // chips={filters.status}
-          // deleteChip={(_category, chip) => onDelete('status', chip as string)}
-          categoryName="Status"
-        >
-          <Select
-            aria-label="Status"
-            isOpen={isStatusDropdownOpen}
-            onOpenChange={(isStatusDropdownOpen) => setIsStatusDropdownOpen(isStatusDropdownOpen)}
-            onSelect={onStatusSelect}
-            selected={filters.status}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-              <MenuToggle
-                ref={toggleRef}
-                onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-                isExpanded={isStatusDropdownOpen}
-                style={
-                  {
-                    width: '100%',
-                    verticalAlign: 'text-bottom',
-                    color: filters.status.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
-                  } as React.CSSProperties
-                }
-              >
-                Status {filters.status.length > 0 ? `(${filters.status.length})` : ''}
-              </MenuToggle>
-            )}
-          >
-            {statusMenuItems}
-          </Select>
-        </ToolbarFilter>
-        <ToolbarFilter
-          // chips={filters.operatingSystem}
-          // deleteChip={(_category, chip) => onDelete('operatingSystem', chip as string)}
-          categoryName="Operating system"
-        >
-          <MenuContainer
-            isOpen={isOSDropdownOpen}
-            onOpenChange={(isOSDropdownOpen) => setIsOSDropdownOpen(isOSDropdownOpen)}
-            onOpenChangeKeys={['Escape']}
-            menu={osMenu}
-            menuRef={osMenuRef}
-            toggle={OSToggle}
-            toggleRef={osToggleRef}
-          />
-        </ToolbarFilter>
-        <ToolbarFilter
-          // chips={filters.operatingSystem}
-          // deleteChip={(_category, chip) => onDelete('operatingSystem', chip as string)}
-          categoryName="Tags"
-        >
-          <MenuContainer
-            isOpen={isTagsDropdownOpen}
-            onOpenChange={(isTagsDropdownOpen) => setIsTagsDropdownOpen(isTagsDropdownOpen)}
-            onOpenChangeKeys={['Escape']}
-            menu={tagsMenu}
-            menuRef={tagsMenuRef}
-            toggle={tagsToggle}
-            toggleRef={tagsToggleRef}
-          />
-        </ToolbarFilter>
-        <ToolbarFilter
-          // chips={filters.rhcStatus}
-          // deleteChip={(_category, chip) => onDelete('rhcStatus', chip as string)}
-          categoryName="RHC status"
-        >
-          <Select
-            aria-label="RHC status"
-            isOpen={isRHCStatusDropdownOpen}
-            onOpenChange={(isRHCStatusDropdownOpen) => setIsRHCStatusDropdownOpen(isRHCStatusDropdownOpen)}
-            onSelect={onRHCStatusSelect}
-            selected={filters.rhcStatus}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-              <MenuToggle
-                ref={toggleRef}
-                onClick={() => setIsRHCStatusDropdownOpen(!isRHCStatusDropdownOpen)}
-                isExpanded={isRHCStatusDropdownOpen}
-                style={
-                  {
-                    width: '100%',
-                    verticalAlign: 'text-bottom',
-                    color: filters.rhcStatus.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
-                  } as React.CSSProperties
-                }
-              >
-                RHC status {filters.rhcStatus.length > 0 ? `(${filters.rhcStatus.length})` : ''}
-              </MenuToggle>
-            )}
-          >
-            {rhcStatusMenuItems}
-          </Select>
-        </ToolbarFilter>
-        <ToolbarFilter
-          // chips={filters.lastSeen}
-          // deleteChip={(_category, chip) => onDelete('Last seen', chip as string)}
-          categoryName="Last seen"
-        >
-          <Select
-            aria-label="Last seen"
-            isOpen={false}
-            onSelect={onLastSeenSelect}
-            selected={filters.lastSeen}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-              <MenuToggle
-                isDisabled
-                ref={toggleRef}
-                onClick={onFilterToggle}
-                isExpanded={isFilterDropdownOpen}
-                style={
-                  {
-                    width: '100%',
-                    verticalAlign: 'text-bottom',
-                  } as React.CSSProperties
-                }
-              >
-                Last seen {filters.lastSeen.length > 0 ? `(${filters.lastSeen.length})` : ''}
-              </MenuToggle>
-            )}
-          >
-            {lastSeenMenuItems}
-          </Select>
-        </ToolbarFilter>
+        <ToolbarToggleGroup>
+          <ToolbarFilter categoryName="Status">
+            <Select
+              aria-label="Status"
+              isOpen={isStatusDropdownOpen}
+              onOpenChange={(isStatusDropdownOpen) => setIsStatusDropdownOpen(isStatusDropdownOpen)}
+              onSelect={onStatusSelect}
+              selected={filters.status}
+              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                <MenuToggle
+                  ref={toggleRef}
+                  onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                  isExpanded={isStatusDropdownOpen}
+                  placeholder="Status"
+                  style={
+                    {
+                      width: '100%',
+                      verticalAlign: 'text-bottom',
+                      color: filters.status.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
+                    } as React.CSSProperties
+                  }
+                >
+                  {filters.status.length === 0 && 'Status'}
+                  {filters.status.length > 1 ? `Status (${filters.status.length})` : filters.status}
+                </MenuToggle>
+              )}
+            >
+              {statusMenuItems}
+            </Select>
+          </ToolbarFilter>
+          <ToolbarFilter categoryName="Tags">
+            <MenuContainer
+              isOpen={isTagsDropdownOpen}
+              onOpenChange={(isTagsDropdownOpen) => setIsTagsDropdownOpen(isTagsDropdownOpen)}
+              onOpenChangeKeys={['Escape']}
+              menu={tagsMenu}
+              menuRef={tagsMenuRef}
+              toggle={tagsToggle}
+              toggleRef={tagsToggleRef}
+            />
+          </ToolbarFilter>
+          <ToolbarFilter categoryName="RHC status">
+            <Select
+              aria-label="RHC status"
+              isOpen={isRHCStatusDropdownOpen}
+              onOpenChange={(isRHCStatusDropdownOpen) => setIsRHCStatusDropdownOpen(isRHCStatusDropdownOpen)}
+              onSelect={onRHCStatusSelect}
+              selected={filters.rhcStatus}
+              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                <MenuToggle
+                  ref={toggleRef}
+                  onClick={() => setIsRHCStatusDropdownOpen(!isRHCStatusDropdownOpen)}
+                  isExpanded={isRHCStatusDropdownOpen}
+                  style={
+                    {
+                      width: '100%',
+                      verticalAlign: 'text-bottom',
+                      color: filters.rhcStatus.length > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
+                    } as React.CSSProperties
+                  }
+                >
+                  {filters.rhcStatus.length === 0 && 'RHC status'}
+                  {filters.rhcStatus.length > 1 ? `RHC status (${filters.rhcStatus.length})` : filters.rhcStatus}{' '}
+                </MenuToggle>
+              )}
+            >
+              {rhcStatusMenuItems}
+            </Select>
+          </ToolbarFilter>
+          <ToolbarFilter categoryName="Last seen">
+            <Select
+              aria-label="Last seen"
+              isOpen={isLastSeenDropdownOpen}
+              selected={filters.lastSeen}
+              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                <MenuToggle
+                  ref={toggleRef}
+                  onClick={() => setIsLastSeenDropdownOpen(!isLastSeenDropdownOpen)}
+                  isExpanded={isLastSeenDropdownOpen}
+                  style={
+                    {
+                      width: '100%',
+                      verticalAlign: 'text-bottom',
+                    } as React.CSSProperties
+                  }
+                >
+                  {filters.lastSeen.length === 0 && 'Last seen'}
+                  {filters.lastSeen.length > 1 ? `Last seen (${filters.lastSeen.length})` : filters.lastSeen}
+                </MenuToggle>
+              )}
+            >
+              {lastSeenMenuItems}
+            </Select>
+          </ToolbarFilter>
 
-        <ToolbarFilter
-          // chips={filters.group}
-          // deleteChip={(_category, chip) => onDelete('group', chip as string)}
-          categoryName="More filter options"
-        >
-          <Select
-            aria-label="More filter options menu"
-            isOpen={isFilterDropdownOpen}
-            onOpenChange={(isFilterDropdownOpen) => setIsFilterDropdownOpen(isFilterDropdownOpen)}
-            onSelect={onMoreFilterOptionsSelect}
-            selected={[...filters.dataCollector, ...filters.systemUpdateMethod, ...filters.group]}
-            toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-              <MenuToggle
-                ref={toggleRef}
-                onClick={onFilterToggle}
-                isExpanded={isFilterDropdownOpen}
-                style={
-                  {
-                    width: '100%',
-                    verticalAlign: 'text-bottom',
-                    color: moreFiltersLength > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
-                  } as React.CSSProperties
-                }
-              >
-                <FilterIcon />
-                {moreFiltersLength > 0 ? `(${moreFiltersLength})` : ''}
-              </MenuToggle>
-            )}
-          >
-            {filterMenuItems}
-          </Select>
-        </ToolbarFilter>
+          <ToolbarFilter categoryName="More filter options">
+            <Select
+              aria-label="More filter options menu"
+              isOpen={isFilterDropdownOpen}
+              onOpenChange={(isFilterDropdownOpen) => setIsFilterDropdownOpen(isFilterDropdownOpen)}
+              onSelect={onMoreFilterOptionsSelect}
+              selected={[...filters.dataCollector, ...filters.systemUpdateMethod, ...filters.group]}
+              toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                <MenuToggle
+                  ref={toggleRef}
+                  onClick={onFilterToggle}
+                  isExpanded={isFilterDropdownOpen}
+                  style={
+                    {
+                      width: '100%',
+                      verticalAlign: 'text-bottom',
+                      color: moreFiltersLength > 0 ? 'var(--pf-v5-global--primary-color--100)' : undefined,
+                    } as React.CSSProperties
+                  }
+                >
+                  <FilterIcon />
+                  {moreFiltersLength > 0 ? `(${moreFiltersLength})` : ''}
+                </MenuToggle>
+              )}
+            >
+              {filterMenuItems}
+            </Select>
+          </ToolbarFilter>
+        </ToolbarToggleGroup>
       </React.Fragment>
     );
   };
@@ -988,7 +891,14 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                   <>
                     <Td dataLabel={columns[0]}>{row.name}</Td>
                     <Td dataLabel={columns[1]}>{row.operatingSystem}</Td>
-                    <Td dataLabel={columns[3]}>{row.tags}</Td>
+                    <Td dataLabel={columns[3]}>
+                      <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                        <FlexItem>
+                          <TagIcon color="var(--pf-v5-global--Color--200)" key="icon" />
+                        </FlexItem>
+                        <FlexItem>{2}</FlexItem>
+                      </Flex>
+                    </Td>
                     <Td dataLabel={columns[7]}>{row.lastSeen}</Td>
                   </>
                 </Tr>

@@ -9,6 +9,8 @@ import {
   EmptyStateFooter,
   EmptyStateHeader,
   EmptyStateIcon,
+  Flex,
+  FlexItem,
   MenuContainer,
   MenuToggle,
   MenuToggleElement,
@@ -33,6 +35,7 @@ import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { columns, rows } from '../data';
+import { TagIcon } from '@patternfly/react-icons';
 
 export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [filters, setFilters] = React.useState<{
@@ -62,8 +65,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   const [inputValue, setInputValue] = React.useState('');
   const osToggleRef = React.useRef<HTMLButtonElement>(null);
   const osMenuRef = React.useRef<HTMLDivElement>();
-  const tagsToggleRef = React.useRef<HTMLButtonElement>(null);
-  const tagsMenuRef = React.useRef<HTMLDivElement>();
   const [checkedItems, setCheckedItems] = React.useState<TreeViewDataItem[]>([]);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
@@ -239,13 +240,10 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       <SelectOption key="cat6" value="System update method">
         System update method
       </SelectOption>,
-      <SelectOption isDisabled key="cat7" value="Last seen">
+      <SelectOption key="cat7" value="Last seen">
         Last seen
       </SelectOption>,
-      <SelectOption isDisabled key="cat8" value="Tags">
-        Tags
-      </SelectOption>,
-      <SelectOption key="cat9" value="Group">
+      <SelectOption key="cat8" value="Group">
         Group
       </SelectOption>,
     ];
@@ -536,60 +534,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       </MenuToggle>
     );
 
-    const tagsToggle = (
-      <MenuToggle ref={tagsToggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-        {'Filter by tags'}
-      </MenuToggle>
-    );
-
     const osMapped = osOptions.map(mapTree);
-
-    const tagsOptions: TreeViewDataItem[] = [
-      {
-        name: 'Location',
-        id: 'ready',
-        checkProps: { checked: false },
-        children: [
-          {
-            name: 'North America',
-            id: 'RHEL_9.3',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'South America',
-            id: 'RHEL_9.2',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'Asia',
-            id: 'RHEL_9.1',
-            checkProps: { checked: false },
-          },
-        ],
-      },
-      {
-        name: 'Environment',
-        id: 'nr',
-        checkProps: { checked: false },
-        children: [
-          {
-            name: 'Production',
-            id: 'production',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'Preview',
-            id: 'preview',
-            checkProps: { checked: false },
-          },
-          {
-            name: 'Staging',
-            id: 'staging',
-            checkProps: { checked: false },
-          },
-        ],
-      },
-    ];
 
     const filterItems = (item: TreeViewDataItem, checkedItem: TreeViewDataItem) => {
       if (item.id === checkedItem.id) {
@@ -610,9 +555,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
 
       let options: TreeViewDataItem[] = [];
 
-      if (treeType === 'operatingSystem') {
-        options = osOptions;
-      } else options = tagsOptions;
+      options = osOptions;
 
       const checkedItemTree = options
         .map((opt) => Object.assign({}, opt))
@@ -652,60 +595,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
         </PanelMain>
       </Panel>
     );
-
-    const tagsMapped = tagsOptions.map(mapTree);
-    const tagsMenu = (
-      <Panel
-        ref={tagsMenuRef}
-        variant="raised"
-        style={{
-          width: '400px',
-        }}
-      >
-        <PanelMain>
-          <section>
-            <PanelMainBody style={{ padding: 0 }}>
-              <TreeView
-                data={tagsMapped}
-                defaultAllExpanded
-                hasBadges
-                hasCheckboxes
-                onCheck={(event, item) => onCheck(event, item, 'tags')}
-              />
-            </PanelMainBody>
-          </section>
-        </PanelMain>
-      </Panel>
-    );
-
-    // const onTagsCheck = (evt: React.ChangeEvent, treeViewItem: TreeViewDataItem, treeType: string) => {
-    //   const checked = (evt.target as HTMLInputElement).checked;
-
-    //   let options: TreeViewDataItem[] = [];
-    //   console.log(treeViewItem);
-
-    //   options = tagsOptions;
-
-    //   console.log(Object.values(filters.tags).filter((value) => value !== treeViewItem.name));
-
-    //   setFilters({
-    //     ...filters,
-    //     tags: checked
-    //       ? [...filters.tags, treeViewItem.name]
-    //       : Object.values(filters.tags).filter((value) => value !== treeViewItem.name),
-    //   });
-    //   setIsFilterDropdownOpen(false);
-
-    //   const checkedItemTree = options
-    //     .map((opt) => Object.assign({}, opt))
-    //     .filter((item) => filterItems(item, treeViewItem));
-    //   const flatCheckedItems = flattenTree(checkedItemTree);
-    //   setCheckedItems((prevCheckedItems) =>
-    //     checked
-    //       ? prevCheckedItems.concat(flatCheckedItems.filter((item) => !prevCheckedItems.some((i) => i.id === item.id)))
-    //       : prevCheckedItems.filter((item) => !flatCheckedItems.some((i) => i.id === item.id)),
-    //   );
-    // };
 
     return (
       <React.Fragment>
@@ -882,11 +771,8 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
           <Select
             aria-label="Last seen"
             isOpen={isFilterDropdownOpen}
-            onSelect={onLastSeenSelect}
-            selected={filters.lastSeen}
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
               <MenuToggle
-                isDisabled
                 ref={toggleRef}
                 onClick={onFilterToggle}
                 isExpanded={isFilterDropdownOpen}
@@ -904,23 +790,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
           >
             {lastSeenMenuItems}
           </Select>
-        </ToolbarFilter>
-        <ToolbarFilter
-          chips={filters.tags}
-          deleteChip={(_category, chip) => onDelete('tags', chip as string)}
-          deleteChipGroup={() => onDeleteGroup('tags')}
-          categoryName="Tags"
-          showToolbarItem={currentCategory === 'Tags'}
-        >
-          <MenuContainer
-            isOpen={isOpen}
-            onOpenChange={(isOpen) => setIsOpen(isOpen)}
-            onOpenChangeKeys={['Escape']}
-            menu={tagsMenu}
-            menuRef={tagsMenuRef}
-            toggle={tagsToggle}
-            toggleRef={tagsToggleRef}
-          />
         </ToolbarFilter>
         <ToolbarFilter
           chips={filters.group}
@@ -957,8 +826,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       </React.Fragment>
     );
   };
-
-  console.log('FILRERA', filters);
 
   const renderToolbar = () => {
     return (
@@ -1065,7 +932,14 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                   <>
                     <Td dataLabel={columns[0]}>{row.name}</Td>
                     <Td dataLabel={columns[1]}>{row.operatingSystem}</Td>
-                    <Td dataLabel={columns[3]}>{row.tags}</Td>
+                    <Td dataLabel={columns[3]}>
+                      <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                        <FlexItem>
+                          <TagIcon color="var(--pf-v5-global--Color--200)" key="icon" />
+                        </FlexItem>
+                        <FlexItem>{2}</FlexItem>
+                      </Flex>
+                    </Td>{' '}
                     <Td dataLabel={columns[7]}>{row.lastSeen}</Td>
                   </>
                 </Tr>
