@@ -50,7 +50,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     rhcStatus: string[];
     systemUpdateMethod: string[];
     lastSeen: string[];
-    tags: string[];
+    tags: React.ReactNode[];
     group: string[];
   }>({
     name: [],
@@ -65,8 +65,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
   });
 
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = React.useState(false);
-  const [isOSDropdownOpen, setIsOSDropdownOpen] = React.useState(false);
-  const [names, setNames] = React.useState<string[]>([]);
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = React.useState(false);
   const [isRHCStatusDropdownOpen, setIsRHCStatusDropdownOpen] = React.useState(false);
   const [isLastSeenDropdownOpen, setIsLastSeenDropdownOpen] = React.useState(false);
@@ -595,7 +593,6 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       const flatCheckedItems = flattenTree(checkedItemTree);
 
       const flatNames = flatCheckedItems.map((item) => item.name);
-      setNames(flatCheckedItems.map((item) => item.name) as string[]);
 
       setCheckedItems((prevCheckedItems) =>
         checked
@@ -669,7 +666,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
 
     return (
       <React.Fragment>
-        <ToolbarToggleGroup>
+        <ToolbarToggleGroup toggleIcon={<></>} breakpoint="xl">
           <ToolbarFilter categoryName="Status">
             <Select
               aria-label="Status"

@@ -187,17 +187,6 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     setIsFilterDropdownOpen(false);
   };
 
-  const onLastSeenSelect = (event, selection) => {
-    const checked = event.target.checked;
-    setFilters({
-      ...filters,
-      lastSeen: checked
-        ? [...filters.lastSeen, selection]
-        : Object.values(filters.lastSeen).filter((value) => value !== selection),
-    });
-    setIsFilterDropdownOpen(false);
-  };
-
   const onDataCollectorSelect = (event, selection) => {
     const checked = event.target.checked;
     setFilters({
@@ -550,7 +539,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
       }
     };
 
-    const onCheck = (evt: React.ChangeEvent, treeViewItem: TreeViewDataItem, treeType: string) => {
+    const onCheck = (evt: React.ChangeEvent, treeViewItem: TreeViewDataItem) => {
       const checked = (evt.target as HTMLInputElement).checked;
 
       let options: TreeViewDataItem[] = [];
@@ -588,7 +577,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
                 data={osMapped}
                 defaultAllExpanded
                 hasCheckboxes
-                onCheck={(event, item) => onCheck(event, item, 'operatingSystem')}
+                onCheck={(event, item) => onCheck(event, item)}
               />
             </PanelMainBody>
           </section>
