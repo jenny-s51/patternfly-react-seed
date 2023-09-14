@@ -35,8 +35,8 @@ import {
   TreeView,
   TreeViewDataItem,
 } from '@patternfly/react-core';
-import SearchIcon from '@patternfly/react-icons/dist/esm/icons/search-icon';
-import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import { SearchIcon } from '@patternfly/react-icons';
+import { FilterIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { columns, rows } from '../data';
 import { TagIcon } from '@patternfly/react-icons';
