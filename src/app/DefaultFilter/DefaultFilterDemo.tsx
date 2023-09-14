@@ -869,7 +869,7 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
   );
 
   React.useEffect(() => {
-    setPaginatedRows(filteredRows.slice((page - 1) * perPage, page * perPage - 1));
+    console.log('Rows updated');
   }, [filteredRows, page, perPage]);
 
   return (
