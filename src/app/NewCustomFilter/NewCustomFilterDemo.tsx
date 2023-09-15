@@ -114,13 +114,12 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
         })
       : rows;
 
-  const [paginatedRows, setPaginatedRows] = React.useState(
-    filteredRows.slice((page - 1) * perPage, page * perPage - 1),
-  );
+  const [paginatedRows, setPaginatedRows] = React.useState(filteredRows);
 
   React.useEffect(() => {
-    console.log('rows updated');
-  }, [filteredRows, page, perPage]);
+    setPaginatedRows([...filteredRows.slice(0, 10)]);
+    setPage(1);
+  }, [filters]);
 
   const buildPagination = (variant, isCompact) => (
     <Pagination
