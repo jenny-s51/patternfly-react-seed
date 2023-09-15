@@ -126,7 +126,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
       isCompact={isCompact}
       itemCount={filteredRows.length}
       page={page}
-      perPage={10}
+      perPage={perPage}
       onSetPage={handleSetPage}
       onPerPageSelect={handlePerPageSelect}
       variant={variant}
