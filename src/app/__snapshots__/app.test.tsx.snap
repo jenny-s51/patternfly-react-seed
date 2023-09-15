@@ -1064,6 +1064,68 @@ exports[`App tests should render default App component 1`] = `
                 1 hour ago
               </td>
             </tr>
+            <tr
+              class="pf-v5-c-table__tr"
+              data-ouia-component-id="OUIA-Generated-TableRow-11"
+              data-ouia-component-type="PF5/TableRow"
+              data-ouia-safe="true"
+            >
+              <td
+                class="pf-v5-c-table__td"
+                data-label="Name"
+                tabindex="-1"
+              >
+                peahpubb
+              </td>
+              <td
+                class="pf-v5-c-table__td"
+                data-label="Status"
+                tabindex="-1"
+              >
+                RHEL 9.4
+              </td>
+              <td
+                class="pf-v5-c-table__td"
+                data-label="Tags"
+                tabindex="-1"
+              >
+                <div
+                  class="pf-v5-l-flex pf-m-space-items-sm"
+                >
+                  <div
+                    class=""
+                  >
+                    <svg
+                      aria-hidden="true"
+                      class="pf-v5-svg"
+                      color="var(--pf-v5-global--Color--200)"
+                      fill="currentColor"
+                      height="1em"
+                      role="img"
+                      viewBox="0 0 512 512"
+                      width="1em"
+                    >
+                      <path
+                        d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class=""
+                  >
+                    2
+                  </div>
+                </div>
+              </td>
+               
+              <td
+                class="pf-v5-c-table__td"
+                data-label="Last seen"
+                tabindex="-1"
+              >
+                1 hour ago
+              </td>
+            </tr>
           </tbody>
         </table>
       </section>
