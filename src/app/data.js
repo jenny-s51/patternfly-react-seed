@@ -7,6 +7,7 @@ export const columns = [
   'RHC Status',
   'System Update Method',
   'Last seen',
+  'Group'
 ];
 
 export const rows = [

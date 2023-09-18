@@ -109,7 +109,9 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
               filters.tags.includes(row.tags.environment)) &&
             (filters.systemUpdateMethod.length === 0 || filters.systemUpdateMethod.includes(row.systemUpdateMethod)) &&
             (filters.operatingSystem.length === 0 || filters.operatingSystem.includes(row.operatingSystem)) &&
-            (filters.group.length === 0 || filters.group.includes(row.group))
+            (filters.group.length === 0 ||
+              filters.group.includes(row.group) ||
+              filters.group.some((group) => group === 'Ungrouped systems' && row.group === 'N/A'))
           );
         })
       : rows;
@@ -845,9 +847,10 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
           <Thead>
             <Tr>
               <Th key={0}>{columns[0]}</Th>
-              <Th key={1}>{columns[2]}</Th>
-              <Th key={2}>{columns[3]}</Th>
-              <Th key={3}>{columns[7]}</Th>
+              <Th key={1}>{columns[8]}</Th>
+              <Th key={2}>{columns[2]}</Th>
+              <Th key={3}>{columns[3]}</Th>
+              <Th key={4}>{columns[7]}</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -885,6 +888,7 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                 <Tr key={rowIndex}>
                   <>
                     <Td dataLabel={columns[0]}>{row.name}</Td>
+                    <Td dataLabel={columns[8]}>{row.group}</Td>
                     <Td dataLabel={columns[1]}>{row.operatingSystem}</Td>
                     <Td dataLabel={columns[3]}>
                       <Flex spaceItems={{ default: 'spaceItemsSm' }}>

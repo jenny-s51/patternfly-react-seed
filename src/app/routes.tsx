@@ -28,14 +28,14 @@ const routes: AppRouteConfig[] = [
   {
     component: DefaultFilterDemo,
     exact: true,
-    label: 'Default Filter Demo',
+    label: 'Demo 1',
     path: '/',
     title: 'PatternFly Seed | Main Dashboard',
   },
   {
     component: NewCustomFilterDemo,
     exact: true,
-    label: 'New Custom Filter Demo',
+    label: 'Demo 2',
     path: '/support',
     title: 'PatternFly Seed | Support Page',
   },
