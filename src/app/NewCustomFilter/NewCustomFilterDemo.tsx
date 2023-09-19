@@ -54,11 +54,11 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
     group: string[];
   }>({
     name: [],
-    status: [],
+    status: ['Stale', 'Stale warning'],
     operatingSystem: [],
     dataCollector: [],
-    rhcStatus: [],
-    systemUpdateMethod: [],
+    rhcStatus: ['Active'],
+    systemUpdateMethod: ['yum'],
     lastSeen: [],
     tags: [],
     group: [],
@@ -782,7 +782,9 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
                   }
                 >
                   <FilterIcon />
-                  {moreFiltersLength > 0 ? `(${moreFiltersLength})` : ''}
+                  {moreFiltersLength > 1
+                    ? `(${moreFiltersLength})`
+                    : [...filters.dataCollector, ...filters.systemUpdateMethod, ...filters.group]}
                 </MenuToggle>
               )}
             >

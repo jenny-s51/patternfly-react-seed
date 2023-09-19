@@ -36,7 +36,7 @@ const routes: AppRouteConfig[] = [
     component: NewCustomFilterDemo,
     exact: true,
     label: 'Demo 2',
-    path: '/support',
+    path: '/Demo2',
     title: 'PatternFly Seed | Support Page',
   },
 ];

@@ -52,12 +52,12 @@ export const DefaultFilterDemo: React.FunctionComponent = () => {
     name: [],
     status: [],
     operatingSystem: [],
-    dataCollector: [],
+    dataCollector: ['subscription-manager'],
     rhcStatus: [],
     systemUpdateMethod: [],
     lastSeen: [],
     tags: [],
-    group: [],
+    group: ['Staging'],
   });
   const [currentCategory, setCurrentCategory] = React.useState('Name');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = React.useState(false);
