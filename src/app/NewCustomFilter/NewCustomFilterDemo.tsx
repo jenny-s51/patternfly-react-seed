@@ -790,6 +790,27 @@ export const NewCustomFilterDemo: React.FunctionComponent = () => {
             </Select>
           </ToolbarFilter>
         </ToolbarToggleGroup>
+        <ToolbarItem>
+          <Button
+            variant="link"
+            onClick={() => {
+              setFilters({
+                name: [],
+                status: [],
+                operatingSystem: [],
+                dataCollector: [],
+                rhcStatus: [],
+                systemUpdateMethod: [],
+                lastSeen: [],
+                tags: [],
+                group: [],
+              });
+              setCheckedItems([]);
+            }}
+          >
+            Reset filters
+          </Button>
+        </ToolbarItem>
       </React.Fragment>
     );
   };
