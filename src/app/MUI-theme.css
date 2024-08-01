@@ -68,6 +68,44 @@
     letter-spacing: 0.02857em;
   }
 
+  .pf-v6-c-menu {
+    --pf-t--global--box-shadow--md: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+    /* --pf-t--global--spacer--sm: 6px; */
+    --pf-v6-c-menu--BorderRadius: 4px;
+
+
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .pf-v6-c-menu__item {
+    --pf-v6-c-menu__item--FontSize: 1rem;
+    --pf-v6-c-menu__item--PaddingBlockStart: 6px;
+    --pf-v6-c-menu__item--PaddingBlockEnd: 6px;
+    --pf-v6-c-menu__item--MarginBlockStart: 16px;
+    --pf-v6-c-menu__item--MarginBlockEnd: 16px;
+    padding: 6px 16px;
+  }
+
+  .pf-v6-c-menu-toggle {
+
+    --pf-v6-c-menu-toggle__controls--MinWidth: 0;
+    --pf-v6-c-menu-toggle--expanded--BackgroundColor: var(--mui-palette-primary-main);
+    text-transform: uppercase;
+    font-weight: var(--mui-button-font-weight);
+    padding: 6px 16px;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+
+
+  }
+ .pf-v6-c-menu-toggle__toggle-icon {
+    margin-right: -4px;
+    margin-left: 8px;
+ }
+
+
+
   .pf-v6-c-table {
     --pf-v6-c-table__sort--m-selected__button--Color: #000000de;
     --pf-v6-c-table__button--BackgroundColor: none;

@@ -61,9 +61,11 @@ export const DropdownDemo: React.FunctionComponent = () => {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
+        variant="contained"
         disableRipple
+        disableElevation
       >
-        Dashboard
+        Actions
       </Button>
       <Menu
         id="basic-menu"
@@ -87,8 +89,8 @@ export const DropdownDemo: React.FunctionComponent = () => {
         onSelect={onSelect}
         onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
         toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-          <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-            Dropdown
+          <MenuToggle variant="primary" ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
+            Actions
           </MenuToggle>
         )}
         ouiaId="BasicDropdown"
@@ -105,10 +107,10 @@ export const DropdownDemo: React.FunctionComponent = () => {
             // Prevent the default onClick functionality for example purposes
             onClick={(ev: any) => ev.preventDefault()}
           >
-            My Account
+            My account
           </DropdownItem>
           <DropdownItem value={2} key="other action">
-            Log Out
+            Logout
           </DropdownItem>
         </DropdownList>
       </Dropdown>
