@@ -1,6 +1,5 @@
 @import url("overrides-from-figma.css");
 
-
 .mui-theme:root {
   --mui-palette-primary-light: #42a5f5;
   --mui-palette-secondary-light: #ba68c8;
