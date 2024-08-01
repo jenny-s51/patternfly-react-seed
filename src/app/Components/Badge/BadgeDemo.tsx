@@ -6,11 +6,8 @@ import {
   MenuToggle,
   MenuToggleElement,
   PageSection,
-  Title,
   Text,
-  Alert,
   TextContent,
-  Divider,
 } from '@patternfly/react-core';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
