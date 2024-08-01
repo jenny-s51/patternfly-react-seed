@@ -23,7 +23,7 @@ const ButtonDemo: React.FunctionComponent = () => {
         </Button>
         <br />
         <br />
-        MUI-themed PF button:
+        PF button:
         <br />
         <PFButton onClick={() => console.log('success')}>Button</PFButton>
       </PageSection>

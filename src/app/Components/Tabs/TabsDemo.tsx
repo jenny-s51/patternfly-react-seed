@@ -88,7 +88,7 @@ const TabsDemo: React.FunctionComponent = () => {
         </Box>
         <br />
         <br />
-        MUI-themed PF tabs:
+        MUI PF tabs:
         <PFTabs
           activeKey={activeTabKey}
           onSelect={handleTabClick}

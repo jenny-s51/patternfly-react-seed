@@ -13,6 +13,10 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const AlertDemo: React.FunctionComponent = () => {
 
+  React.useEffect(() => {
+    console.log('refresh');
+  }, [(window as any).isSwitched])
+
   return (
     <>
       <PageSection>
@@ -29,10 +33,10 @@ const AlertDemo: React.FunctionComponent = () => {
           This is an outlined warning Alert.
         </Alert>
         <br />
-        MUI-themed PF Alert:
+        PF Alert:
         <PFAlert
         // hide this when the theme is toggled
-          customIcon={<WarningAmberIcon />}
+          customIcon={(window as any).isSwitched ? <WarningAmberIcon /> : undefined}
           variant="warning"
           title="This is an outlined warning Alert."
           ouiaId="WarningAlert"

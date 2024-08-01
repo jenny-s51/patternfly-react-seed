@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Tbody, Td, Th, ThProps, Thead, Tr } from '@patternfly/react-table';
 import { PageSection } from '@patternfly/react-core';
-import MUISortableTable from '../MUITable/MUISortableTable';
+import MUISortableTable from './MUITable/MUISortableTable';
 
 interface Repository {
   name: string;
@@ -11,7 +11,7 @@ interface Repository {
   lastCommit: string;
 }
 
-export const PFSortableTable: React.FunctionComponent = () => {
+export const TableDemo: React.FunctionComponent = () => {
   // In real usage, this data would come from some external source like an API via props.
   const repositories: Repository[] = [
     { name: 'one', branches: 'two', prs: 'a', workspaces: 'four', lastCommit: 'five' },

@@ -46,7 +46,7 @@ export const DropdownDemo: React.FunctionComponent = () => {
       <TextContent>
         <Text component="h1">Dropdown demo </Text>
         <Text component="p">
-          Dropdown theming demo. This is a small demo to test theming the PF6 Alert component. Stylesheet contains
+          Dropdown theming demo. This is a small demo to test theming the PF6 Dropdown component. Stylesheet contains
           themed tokens for PF6 component and has been loaded into this demo.
         </Text>
       </TextContent>

@@ -28,9 +28,19 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
 
   const [isChecked, setIsChecked] = React.useState<boolean>(true);
 
+  React.useEffect(() => {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).isSwitched = !isChecked;
+    console.log('~~~get switched value~~~', (window as any).isSwitched);
+  }, [(window as any).isSwitched]);
+
   const handleChange = (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {
     setIsChecked(!checked);
     document.documentElement.classList.toggle('mui-theme');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     // set a var true or false wheteher the switch is set and
     // anywhere there is an icon override have that be conditional of wether the value is true or not
     // window.isSwitched

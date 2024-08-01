@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { Route, RouteComponentProps, Switch, useLocation } from 'react-router-dom';
-import { MUIThemePOC } from '@app/Components/General/GeneralSettings';
 import { NotFound } from '@app/NotFound/NotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { Support } from './Support/Support';
 import { DropdownDemo } from './Components/Dropdown/DropdownDemo';
-import MUISortableTable from './Dashboard/MUITable/MUISortableTable';
-import { PFSortableTable } from "./Dashboard/PFTable/PFSortableTable";
 import { PaginationDemo } from "./Components/Pagination/PaginationDemo";
 import { AlertDemo } from "./Components/Alert/AlertDemo";
 import { BadgeDemo } from "./Components/Badge/BadgeDemo";
@@ -18,6 +15,7 @@ import { PopoverDemo } from "./Components/Popover/PopoverDemo";
 import { TooltipDemo } from "./Components/Tooltip/TooltipDemo";
 import { ButtonDemo } from "./Components/Button/ButtonDemo";
 import { TabsDemo } from "./Components/Tabs/TabsDemo";
+import { TableDemo } from "./Components/Table/TableDemo";
 
 let routeFocusTimer: number;
 export interface IAppRoute {
@@ -39,18 +37,6 @@ export interface IAppRouteGroup {
 export type AppRouteConfig = IAppRoute | IAppRouteGroup;
 
 const routes: AppRouteConfig[] = [
-  {
-    label: 'Dashboard',
-    routes: [
-      {
-        component: PFSortableTable,
-        exact: true,
-        label: 'PF Table',
-        path: '/',
-        title: 'PatternFly Seed | PF Table',
-      },
-    ],
-  },
   {
     component: Support,
     exact: true,
@@ -136,6 +122,13 @@ const routes: AppRouteConfig[] = [
         exact: true,
         label: 'Tabs Demo',
         path: '/components/tabs',
+        title: 'PatternFly Seed | Profile Settings',
+      },
+      {
+        component: TableDemo,
+        exact: true,
+        label: 'Table Demo',
+        path: '/components/table',
         title: 'PatternFly Seed | Profile Settings',
       },
       {
