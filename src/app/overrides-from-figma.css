@@ -673,7 +673,7 @@
     --pf-t--global--icon--color--severity--none--default: var(--pf-t--global--color--severity--none--100);
     --pf-t--global--icon--color--severity--undefined--default: var(--pf-t--global--color--severity--undefined--100);
     --pf-t--global--icon--color--status--warning--clicked: var(--pf-t--global--color--status--warning--300);
-    --pf-t--global--icon--color--status--warning--default: ##ed6c02e5;
+    --pf-t--global--icon--color--status--warning--default: #ed6c02e5;
     --pf-t--global--icon--color--status--warning--hover: var(--pf-t--global--color--status--warning--300);
     --pf-t--global--icon--color--subtle: var(--pf-t--global--icon--color--200);
     --pf-t--global--icon--size--font--2xl: var(--pf-t--global--font--size--2xl);

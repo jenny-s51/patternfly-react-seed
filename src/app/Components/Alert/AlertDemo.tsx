@@ -13,9 +13,24 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const AlertDemo: React.FunctionComponent = () => {
 
+  const [isSwitched, setIsSwitched] = React.useState<boolean>(false);
+
   React.useEffect(() => {
-    console.log('refresh');
-  }, [(window as any).isSwitched])
+    const updateSwitchState = () => {
+      const switchValue = (window as any).isSwitched;
+      setIsSwitched(switchValue);
+    };
+
+    updateSwitchState();
+
+    console.log('test', isSwitched);
+
+    return () => {
+
+    };
+  }, []);
+
+
 
   return (
     <>
@@ -36,7 +51,7 @@ const AlertDemo: React.FunctionComponent = () => {
         PF Alert:
         <PFAlert
         // hide this when the theme is toggled
-          customIcon={(window as any).isSwitched ? <WarningAmberIcon /> : undefined}
+          customIcon={isSwitched ? <WarningAmberIcon /> : undefined}
           variant="warning"
           title="This is an outlined warning Alert."
           ouiaId="WarningAlert"
