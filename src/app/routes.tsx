@@ -2,20 +2,12 @@ import * as React from 'react';
 import { Route, RouteComponentProps, Switch, useLocation } from 'react-router-dom';
 import { NotFound } from '@app/NotFound/NotFound';
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
-import { Support } from './Support/Support';
 import { DropdownDemo } from './Components/Dropdown/DropdownDemo';
-import { PaginationDemo } from "./Components/Pagination/PaginationDemo";
 import { AlertDemo } from "./Components/Alert/AlertDemo";
-import { BadgeDemo } from "./Components/Badge/BadgeDemo";
-import { DescriptionListDemo } from "./Components/DescriptionList/DescriptionListDemo";
-import { FormDemo } from "./Components/Form/FormDemo";
-import { LabelDemo } from "./Components/Label/LabelDemo";
-import { ModalDemo } from "./Components/Modal/ModalDemo";
-import { PopoverDemo } from "./Components/Popover/PopoverDemo";
-import { TooltipDemo } from "./Components/Tooltip/TooltipDemo";
 import { ButtonDemo } from "./Components/Button/ButtonDemo";
 import { TabsDemo } from "./Components/Tabs/TabsDemo";
 import { TableDemo } from "./Components/Table/TableDemo";
+import { Dashboard } from "./Dashboard/Dashboard";
 
 let routeFocusTimer: number;
 export interface IAppRoute {
@@ -38,12 +30,13 @@ export type AppRouteConfig = IAppRoute | IAppRouteGroup;
 
 const routes: AppRouteConfig[] = [
   {
-    component: Support,
+    component: Dashboard,
     exact: true,
-    label: 'Support',
-    path: '/support',
-    title: 'PatternFly Seed | Support Page',
+    label: 'Dashboard',
+    path: '/',
+    title: 'PatternFly Seed | Dashboard Page',
   },
+
   {
     label: 'Components',
     routes: [
@@ -55,13 +48,6 @@ const routes: AppRouteConfig[] = [
         title: 'PatternFly Seed | Profile Settings',
       },
       {
-        component: BadgeDemo,
-        exact: true,
-        label: 'Badge Demo',
-        path: '/components/badge',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-      {
         component: ButtonDemo,
         exact: true,
         label: 'Button Demo',
@@ -69,52 +55,10 @@ const routes: AppRouteConfig[] = [
         title: 'PatternFly Seed | Profile Settings',
       },
       {
-        component: DescriptionListDemo,
-        exact: true,
-        label: 'Description List Demo',
-        path: '/components/description-list',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-      {
         component: DropdownDemo,
         exact: true,
         label: 'Dropdown Demo',
         path: '/components/dropdown',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-      {
-        component: FormDemo,
-        exact: true,
-        label: 'Form Demo',
-        path: '/components/form',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-      {
-        component: LabelDemo,
-        exact: true,
-        label: 'Label Demo',
-        path: '/components/label',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-      {
-        component: ModalDemo,
-        exact: true,
-        label: 'Modal Demo',
-        path: '/components/modal',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-      {
-        component: PaginationDemo,
-        exact: true,
-        label: 'Pagination Demo',
-        path: '/components/pagination',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-      {
-        component: PopoverDemo,
-        exact: true,
-        label: 'Popover Demo',
-        path: '/components/pagination',
         title: 'PatternFly Seed | Profile Settings',
       },
       {
@@ -129,13 +73,6 @@ const routes: AppRouteConfig[] = [
         exact: true,
         label: 'Table Demo',
         path: '/components/table',
-        title: 'PatternFly Seed | Profile Settings',
-      },
-      {
-        component: TooltipDemo,
-        exact: true,
-        label: 'Tooltip Demo',
-        path: '/components/tooltip',
         title: 'PatternFly Seed | Profile Settings',
       },
     ],
