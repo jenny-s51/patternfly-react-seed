@@ -67,36 +67,38 @@
 }
 
 .mui-theme .pf-v6-c-menu {
-  --pf-t--global--box-shadow--md: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
-  /* --pf-t--global--spacer--sm: 6px; */
+  --pf-v6-c-menu--BoxShadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
   --pf-v6-c-menu--BorderRadius: 4px;
-
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-.mui-theme .pf-v6-c-menu__item {
-  --pf-v6-c-menu__item--FontSize: 1rem;
+  --pf-v6-c-menu--PaddingBlockStart: 8px;
+  --pf-v6-c-menu--PaddingBlockEnd: 8px;
+  --pf-v6-c-menu--PaddingInlineStart: 8px;
+  --pf-v6-c-menu--PaddingInlineEnd: 8px;
   --pf-v6-c-menu__item--PaddingBlockStart: 6px;
   --pf-v6-c-menu__item--PaddingBlockEnd: 6px;
-  --pf-v6-c-menu__item--MarginBlockStart: 16px;
-  --pf-v6-c-menu__item--MarginBlockEnd: 16px;
-  padding: 6px 16px;
+  --pf-v6-c-menu__item--PaddingInlineStart: 16px;
+  --pf-v6-c-menu__item--PaddingInlineEnd: 16px;
+  --pf-v6-c-menu__item--FontSize: 1rem;
 }
 
 .mui-theme .pf-v6-c-menu-toggle {
   --pf-v6-c-menu-toggle__controls--MinWidth: 0;
   --pf-v6-c-menu-toggle--expanded--BackgroundColor: var(--mui-palette-primary-main);
+  --pf-v6-c-menu-toggle--LineHeight: 1.75;
+  --pf-v6-c-menu-toggle--PaddingBlockStart: 6px;
+  --pf-v6-c-menu-toggle--PaddingBlockEnd: 6px;
+  --pf-v6-c-menu-toggle--PaddingInlineStart: 16px;
+  --pf-v6-c-menu-toggle--PaddingInlineEnd: 16px;
+  --pf-v6-c-menu-toggle--ColumnGap: 0;
+
   text-transform: uppercase;
   font-weight: var(--mui-button-font-weight);
-  padding: 6px 16px;
-  line-height: 1.75;
   letter-spacing: 0.02857em;
 }
 
 .mui-theme .pf-v6-c-menu-toggle__toggle-icon {
   margin-right: -4px;
   margin-left: 8px;
+  font-size: 20px;
 }
 
 .mui-theme .pf-v6-c-table {
