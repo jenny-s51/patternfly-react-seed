@@ -6,11 +6,8 @@ import {
   MenuToggle,
   MenuToggleElement,
   PageSection,
-  Title,
   Text,
-  Alert,
   TextContent,
-  Divider,
 } from '@patternfly/react-core';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -18,7 +15,6 @@ import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export const PopoverDemo: React.FunctionComponent = () => {
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -29,7 +25,6 @@ export const PopoverDemo: React.FunctionComponent = () => {
   };
 
   const [isOpen, setIsOpen] = React.useState(false);
-
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -52,33 +47,32 @@ export const PopoverDemo: React.FunctionComponent = () => {
       </TextContent>
       <br />
       MUI Dropdown:
-
       <div>
-      <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-        endIcon={<KeyboardArrowDownIcon />}
-        disableRipple
-      >
-        Dashboard
-      </Button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
-      </Menu>
-    </div>
+        <Button
+          id="basic-button"
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClick}
+          endIcon={<KeyboardArrowDownIcon />}
+          disableRipple
+        >
+          Dashboard
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={handleClose}>My account</MenuItem>
+          <MenuItem onClick={handleClose}>Logout</MenuItem>
+        </Menu>
+      </div>
       <br />
       PF Dropdown:
       <br />
