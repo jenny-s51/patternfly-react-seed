@@ -17,13 +17,12 @@ const AlertDemo: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     const updateSwitchState = () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const switchValue = (window as any).isSwitched;
       setIsSwitched(switchValue);
     };
 
     updateSwitchState();
-
-    console.log('test', isSwitched);
 
     return () => {
 
