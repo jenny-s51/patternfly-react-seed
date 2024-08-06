@@ -1,114 +1,80 @@
 import React from 'react';
 import {
-  Dropdown,
-  DropdownItem,
-  DropdownList,
-  MenuToggle,
-  MenuToggleElement,
   PageSection,
+  Pagination,
   Text,
   TextContent,
 } from '@patternfly/react-core';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import TablePagination from '@mui/material/TablePagination';
 
 export const PaginationDemo: React.FunctionComponent = () => {
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [muiPage, setMuiPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const [isOpen, setIsOpen] = React.useState(false);
-
-
-  const onToggleClick = () => {
-    setIsOpen(!isOpen);
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => {
+    setMuiPage(newPage);
   };
 
-  const onSelect = (_event: React.MouseEvent<Element, MouseEvent> | undefined, value: string | number | undefined) => {
-    // eslint-disable-next-line no-console
-    console.log('selected', value);
-    setIsOpen(false);
+  const [pfPage, setPfPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(20);
+
+  const onSetPage = (_event: React.MouseEvent | React.KeyboardEvent | MouseEvent, newPage: number) => {
+    setPfPage(newPage);
   };
+
+  const onPerPageSelect = (
+    _event: React.MouseEvent | React.KeyboardEvent | MouseEvent,
+    newPerPage: number,
+    newPage: number
+  ) => {
+    setPerPage(newPerPage);
+    setPfPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setMuiPage(0);
+  };
+
 
   return (
     <PageSection>
       <TextContent>
-        <Text component="h1">Dropdown demo </Text>
+        <Text component="h1">Pagination demo </Text>
         <Text component="p">
-          Dropdown theming demo. This is a small demo to test theming the PF6 Alert component. Stylesheet contains
+          Pagination theming demo. This is a small demo to test theming the PF6 Pagination component. Stylesheet contains
           themed tokens for PF6 component and has been loaded into this demo.
         </Text>
       </TextContent>
       <br />
       MUI Pagination:
 
-      <div>
-      <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-        endIcon={<KeyboardArrowDownIcon />}
-        disableRipple
-      >
-        Dashboard
-      </Button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
-      </Menu>
-    </div>
+      <TablePagination
+      component="div"
+      count={100}
+      page={muiPage}
+      onPageChange={handleChangePage}
+      rowsPerPage={rowsPerPage}
+      onRowsPerPageChange={handleChangeRowsPerPage}
+    />
       <br />
       PF Pagination:
       <br />
-      <Dropdown
-        isOpen={isOpen}
-        onSelect={onSelect}
-        onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-          <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
-            Dropdown
-          </MenuToggle>
-        )}
-        ouiaId="BasicDropdown"
-        shouldFocusToggleOnSelect
-      >
-        <DropdownList>
-          <DropdownItem value={0} key="action">
-            Profile
-          </DropdownItem>
-          <DropdownItem
-            value={1}
-            key="link"
-            to="#default-link2"
-            // Prevent the default onClick functionality for example purposes
-            onClick={(ev: any) => ev.preventDefault()}
-          >
-            My Account
-          </DropdownItem>
-          <DropdownItem value={2} key="other action">
-            Log Out
-          </DropdownItem>
-        </DropdownList>
-      </Dropdown>
+      <Pagination
+      itemCount={523}
+      perPage={perPage}
+      page={pfPage}
+      onSetPage={onSetPage}
+      widgetId="top-example"
+      onPerPageSelect={onPerPageSelect}
+      ouiaId="PaginationTop"
+    />
     </PageSection>
   );
 };
