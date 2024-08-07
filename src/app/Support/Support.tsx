@@ -8,10 +8,9 @@ import {
   EmptyStateFooter,
   EmptyStateVariant,
   PageSection,
-  Text,
-  TextContent,
-  TextVariants,
+  ContentVariants,
 } from '@patternfly/react-core';
+import { Content } from "@patternfly/react-core";
 
 export interface ISupportProps {
   sampleProp?: string;
@@ -22,16 +21,16 @@ let Support: React.FunctionComponent<ISupportProps> = () => (
   <PageSection>
     <EmptyState variant={EmptyStateVariant.full} titleText="Empty State (Stub Support Module)" icon={CubesIcon} >
       <EmptyStateBody>
-        <TextContent>
-          <Text component="p">
+        <Content>
+          <Content component="p">
             This represents an the empty state pattern in Patternfly 4. Hopefully it&apos;s simple enough to use but
             flexible enough to meet a variety of needs.
-          </Text>
-          <Text component={TextVariants.small}>
+          </Content>
+          <Content component={ContentVariants.small}>
             This text has overridden a css component variable to demonstrate how to apply customizations using
             PatternFly&apos;s global variable API.
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
       </EmptyStateBody><EmptyStateFooter>
       <Button variant="primary">Primary Action</Button>
       <EmptyStateActions>

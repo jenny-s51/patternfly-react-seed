@@ -1,13 +1,12 @@
 import React from 'react';
 import {
+  Content,
   Dropdown,
   DropdownItem,
   DropdownList,
   MenuToggle,
   MenuToggleElement,
   PageSection,
-  Text,
-  TextContent,
 } from '@patternfly/react-core';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -40,13 +39,13 @@ export const BadgeDemo: React.FunctionComponent = () => {
 
   return (
     <PageSection>
-      <TextContent>
-        <Text component="h1">Badge demo </Text>
-        <Text component="p">
+      <Content>
+        <Content component="h1">Badge demo </Content>
+        <Content component="p">
           Badge theming demo. This is a small demo to test theming the PF6 Badge component. Stylesheet contains
           themed tokens for PF6 component and has been loaded into this demo.
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       <br />
       MUI Dropdown:
 

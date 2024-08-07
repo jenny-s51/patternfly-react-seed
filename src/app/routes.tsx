@@ -9,6 +9,7 @@ import { TabsDemo } from "./Components/Tabs/TabsDemo";
 import { TableDemo } from "./Components/Table/TableDemo";
 import { Dashboard } from "./Dashboard/Dashboard";
 import { PaginationDemo } from "./Components/Pagination/PaginationDemo";
+import { SearchFilterDemo } from "./Components/SearchFilter/SearchFilterDemo";
 
 let routeFocusTimer: number;
 export interface IAppRoute {
@@ -67,6 +68,13 @@ const routes: AppRouteConfig[] = [
         exact: true,
         label: 'Pagination Demo',
         path: '/components/pagination',
+        title: 'PatternFly Seed | Profile Settings',
+      },
+      {
+        component: SearchFilterDemo,
+        exact: true,
+        label: 'Search Filter Demo',
+        path: '/components/searchfilter',
         title: 'PatternFly Seed | Profile Settings',
       },
       {

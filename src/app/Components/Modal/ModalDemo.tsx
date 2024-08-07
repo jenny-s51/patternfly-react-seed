@@ -6,13 +6,12 @@ import {
   MenuToggle,
   MenuToggleElement,
   PageSection,
-  Text,
-  TextContent,
 } from '@patternfly/react-core';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Content } from "@patternfly/react-core";
 
 export const ModalDemo: React.FunctionComponent = () => {
 
@@ -40,13 +39,13 @@ export const ModalDemo: React.FunctionComponent = () => {
 
   return (
     <PageSection>
-      <TextContent>
-        <Text component="h1">Dropdown demo </Text>
-        <Text component="p">
+      <Content>
+        <Content component="h1">Dropdown demo </Content>
+        <Content component="p">
           Dropdown theming demo. This is a small demo to test theming the PF6 Alert component. Stylesheet contains
           themed tokens for PF6 component and has been loaded into this demo.
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       <br />
       MUI Dropdown:
 
