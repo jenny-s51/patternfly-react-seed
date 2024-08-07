@@ -24,15 +24,13 @@ import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Paper from '@mui/material/Paper';
-import { Select, SelectChangeEvent } from "@mui/material";
-
+import { Select, SelectChangeEvent } from '@mui/material';
 
 export const SearchFilterDemo: React.FunctionComponent = () => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
   const [statusIsExpanded, setStatusIsExpanded] = React.useState(false);
   const [statusSelected, setStatusSelected] = React.useState('');
-
 
   const toggleIsExpanded = () => {
     setIsExpanded(!isExpanded);
@@ -52,7 +50,6 @@ export const SearchFilterDemo: React.FunctionComponent = () => {
     setStatusSelected(selection);
     setStatusIsExpanded(false);
   };
-
 
   const toggleGroupItems = (
     <React.Fragment>
@@ -129,7 +126,7 @@ export const SearchFilterDemo: React.FunctionComponent = () => {
       MUI Search Filter:
       <br />
       <Paper component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 500 }}>
-          <FormControl sx={{ width: 140 }}>
+        <FormControl sx={{ width: 140 }}>
           <InputLabel id="demo-simple-select-label">Age</InputLabel>
           <Select
             labelId="demo-simple-select-label"
