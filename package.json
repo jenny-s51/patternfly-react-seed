@@ -77,7 +77,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
-    "@patternfly/react-core": "6.0.0-alpha.83",
+    "@patternfly/react-core": "6.0.0-alpha.89",
     "@patternfly/react-icons": "6.0.0-alpha.30",
     "@patternfly/react-styles": "6.0.0-alpha.29",
     "@patternfly/react-table": "6.0.0-alpha.84",

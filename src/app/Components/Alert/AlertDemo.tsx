@@ -1,9 +1,8 @@
 import * as React from 'react';
 import {
+  Content,
   Alert as PFAlert,
   PageSection,
-  Text,
-  TextContent,
 } from '@patternfly/react-core';
 import '../../MUI-theme.css';
 
@@ -35,13 +34,13 @@ const AlertDemo: React.FunctionComponent = () => {
   return (
     <>
       <PageSection>
-        <TextContent>
-          <Text component="h1">Alert demo </Text>
-          <Text component="p">
+        <Content>
+          <Content component="h1">Alert demo </Content>
+          <Content component="p">
             Alert theming demo. This is a small demo to test theming the PF6 Alert component. Stylesheet contains themed
             tokens for PF6 component and has been loaded into this demo.
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
         <br />
         MUI Alert:
         <Alert variant="outlined" severity="warning">

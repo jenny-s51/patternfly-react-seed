@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { PageSection, Text, TextContent } from '@patternfly/react-core';
+import { Content, PageSection } from '@patternfly/react-core';
 
 const Dashboard: React.FunctionComponent = () => (
   <PageSection>
-  <TextContent>
-  <Text component="h1">MUI / PF6 POC</Text>
-  <Text component="p">
+  <Content component="h1">MUI / PF6 POC</Content>
+  <Content component="p">
 
 
   This is a Material UI theme POC, prioritizing components from the model registry UI, built on top of PatternFly 6 design tokens.
@@ -14,8 +13,7 @@ const Dashboard: React.FunctionComponent = () => (
   <br />
    Navigate to Components to view themed PF components, and toggle the switch above to apply MUI theming.
 
-  </Text>
-</TextContent>
+  </Content>
 </PageSection>
 )
 

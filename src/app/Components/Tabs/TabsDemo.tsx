@@ -1,13 +1,12 @@
 import * as React from 'react';
 import {
+  Content,
   Tab as PFTab,
   Tabs as PFTabs,
   PageSection,
   TabContent,
   TabContentBody,
   TabTitleText,
-  Text,
-  TextContent,
 } from '@patternfly/react-core';
 import '../../MUI-theme.css';
 
@@ -62,14 +61,12 @@ const TabsDemo: React.FunctionComponent = () => {
   return (
     <>
       <PageSection>
-        <TextContent>
-          <Text component="h1">Tabs demo </Text>
-          <Text component="p">
-            Tabs theming demo. This is a small demo to test theming the PF6 Tabs component. Stylesheet contains themed
-            tokens for PF6 components and has been loaded into this demo.
-          </Text>
-          <br />
-        </TextContent>
+        <Content component="h1">Tabs demo </Content>
+        <Content component="p">
+          Tabs theming demo. This is a small demo to test theming the PF6 Tabs component. Stylesheet contains themed
+          tokens for PF6 components and has been loaded into this demo.
+        </Content>
+        <br />
         MUI Tabs:
         <br />
         <Box sx={{ width: '100%' }}>

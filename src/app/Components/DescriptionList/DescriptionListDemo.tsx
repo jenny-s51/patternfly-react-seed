@@ -1,16 +1,12 @@
 import React from 'react';
 import {
+  Content,
   Dropdown,
   DropdownItem,
   DropdownList,
   MenuToggle,
   MenuToggleElement,
   PageSection,
-  Title,
-  Text,
-  Alert,
-  TextContent,
-  Divider,
 } from '@patternfly/react-core';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -43,13 +39,11 @@ export const DescriptionListDemo: React.FunctionComponent = () => {
 
   return (
     <PageSection>
-      <TextContent>
-        <Text component="h1">Dropdown demo </Text>
-        <Text component="p">
+        <Content component="h1">Dropdown demo </Content>
+        <Content component="p">
           Dropdown theming demo. This is a small demo to test theming the PF6 Alert component. Stylesheet contains
           themed tokens for PF6 component and has been loaded into this demo.
-        </Text>
-      </TextContent>
+        </Content>
       <br />
       MUI Dropdown:
 

@@ -1,13 +1,12 @@
 import React from 'react';
 import {
+  Content,
   Dropdown,
   DropdownItem,
   DropdownList,
   MenuToggle,
   MenuToggleElement,
   PageSection,
-  Text,
-  TextContent,
 } from '@patternfly/react-core';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -15,7 +14,6 @@ import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export const DropdownDemo: React.FunctionComponent = () => {
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -26,7 +24,6 @@ export const DropdownDemo: React.FunctionComponent = () => {
   };
 
   const [isOpen, setIsOpen] = React.useState(false);
-
 
   const onToggleClick = () => {
     setIsOpen(!isOpen);
@@ -40,44 +37,41 @@ export const DropdownDemo: React.FunctionComponent = () => {
 
   return (
     <PageSection>
-      <TextContent>
-        <Text component="h1">Dropdown demo </Text>
-        <Text component="p">
-          Dropdown theming demo. This is a small demo to test theming the PF6 Dropdown component. Stylesheet contains
-          themed tokens for PF6 component and has been loaded into this demo.
-        </Text>
-      </TextContent>
+      <Content component="h1">Dropdown demo </Content>
+      <Content component="p">
+        Dropdown theming demo. This is a small demo to test theming the PF6 Dropdown component. Stylesheet contains
+        themed tokens for PF6 component and has been loaded into this demo.
+      </Content>
       <br />
       MUI Dropdown:
-
       <div>
-      <Button
-        id="basic-button"
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-        endIcon={<KeyboardArrowDownIcon />}
-        variant="contained"
-        disableRipple
-        disableElevation
-      >
-        Actions
-      </Button>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
-      </Menu>
-    </div>
+        <Button
+          id="basic-button"
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClick}
+          endIcon={<KeyboardArrowDownIcon />}
+          variant="contained"
+          disableRipple
+          disableElevation
+        >
+          Actions
+        </Button>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={handleClose}>My account</MenuItem>
+          <MenuItem onClick={handleClose}>Logout</MenuItem>
+        </Menu>
+      </div>
       <br />
       PF Dropdown:
       <br />

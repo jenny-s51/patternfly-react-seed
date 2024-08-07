@@ -1,9 +1,8 @@
 import React from 'react';
 import {
+  Content,
   PageSection,
   Pagination,
-  Text,
-  TextContent,
 } from '@patternfly/react-core';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -45,13 +44,11 @@ export const PaginationDemo: React.FunctionComponent = () => {
 
   return (
     <PageSection>
-      <TextContent>
-        <Text component="h1">Pagination demo </Text>
-        <Text component="p">
+        <Content component="h1">Pagination demo </Content>
+        <Content component="p">
           Pagination theming demo. This is a small demo to test theming the PF6 Pagination component. Stylesheet contains
           themed tokens for PF6 component and has been loaded into this demo.
-        </Text>
-      </TextContent>
+        </Content>
       <br />
       MUI Pagination:
 
@@ -71,9 +68,9 @@ export const PaginationDemo: React.FunctionComponent = () => {
       perPage={perPage}
       page={pfPage}
       onSetPage={onSetPage}
-      widgetId="top-example"
+      widgetId="compact-example"
       onPerPageSelect={onPerPageSelect}
-      ouiaId="PaginationTop"
+      isCompact
     />
     </PageSection>
   );

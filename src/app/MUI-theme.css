@@ -26,7 +26,7 @@
   --mui-alert-warning-font-weight: 400;
 
   --mui-button-font-weight: 500;
-  
+
   --pf-t--global--border--width--box--status--default: 1px;
   --pf-t--global--border--radius--pill: 4px;
   --pf-t--global--border--radius--medium: 4px;
@@ -194,4 +194,20 @@
   --pf-v6-c-tab-content__body--m-padding--PaddingBlockStart: var(--pf-t--global--spacer--lg);
   --pf-v6-c-tab-content__body--m-padding--PaddingInlineEnd: var(--pf-t--global--spacer--lg);
   --pf-v6-c-tab-content__body--m-padding--PaddingInlineStart: var(--pf-t--global--spacer--lg);
+}
+
+.mui-theme .pf-v6-c-pagination {
+  --pf-v6-c-pagination__total-items--Display: block;
+}
+
+.mui-theme .pf-v6-c-pagination__total-items b {
+  font-weight: normal;
+}
+
+.mui-theme .pf-v6-c-pagination__page-menu {
+  order: -1;
+}
+
+.mui-theme .pf-v6-c-pagination__page-menu::before {
+  content: "Rows per page:";
 }

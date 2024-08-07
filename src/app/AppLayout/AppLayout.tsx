@@ -54,7 +54,7 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
         </Button>
       </MastheadToggle>
       <MastheadMain>
-        <MastheadBrand>
+        <MastheadBrand component="a">
           <svg height="40px" viewBox="0 0 679 158">
             <title>PatternFly logo</title>
             <defs>
