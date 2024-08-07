@@ -4,33 +4,41 @@ import {
   Icon,
   MenuToggle,
   MenuToggleElement,
+  Toolbar as PFToolbar,
   PageSection,
   SearchInput,
-  Select,
+  Select as PFSelect,
   SelectList,
   SelectOption,
-  Toolbar,
+  Toolbar as PFToolbar,
   ToolbarContent,
   ToolbarGroup,
   ToolbarItem,
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import MenuItem from '@mui/material/MenuItem';
+import SearchIcon from '@mui/icons-material/Search';
 import FilterIcon from '@patternfly/react-icons/dist/esm/icons/filter-icon';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Paper from '@mui/material/Paper';
+import { Select, SelectChangeEvent } from "@mui/material";
+
 
 export const SearchFilterDemo: React.FunctionComponent = () => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
   const [statusIsExpanded, setStatusIsExpanded] = React.useState(false);
   const [statusSelected, setStatusSelected] = React.useState('');
-  const [riskIsExpanded, setRiskIsExpanded] = React.useState(false);
-  const [riskSelected, setRiskSelected] = React.useState('');
+
 
   const toggleIsExpanded = () => {
     setIsExpanded(!isExpanded);
   };
 
   const statusOptions = ['New', 'Pending', 'Running', 'Cancelled'];
-  const riskOptions = ['Risk', 'Low', 'Medium', 'High'];
 
   const onInputChange = (newValue: string) => {
     setInputValue(newValue);
@@ -45,23 +53,15 @@ export const SearchFilterDemo: React.FunctionComponent = () => {
     setStatusIsExpanded(false);
   };
 
-  const onRiskToggle = () => {
-    setRiskIsExpanded(!riskIsExpanded);
-  };
-
-  const onRiskSelect = (_event: React.MouseEvent<Element, MouseEvent> | undefined, selection: string) => {
-    setRiskSelected(selection);
-    setRiskIsExpanded(false);
-  };
 
   const toggleGroupItems = (
     <React.Fragment>
       <ToolbarGroup variant="filter-group">
         <ToolbarItem>
-          <Select
+          <PFSelect
             toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
               <MenuToggle
-                ref={toggleRef}
+                ref={toggleRef!}
                 onClick={() => onStatusToggle()}
                 isExpanded={statusIsExpanded}
                 icon={
@@ -90,7 +90,7 @@ export const SearchFilterDemo: React.FunctionComponent = () => {
                 </SelectOption>
               ))}
             </SelectList>
-          </Select>
+          </PFSelect>
         </ToolbarItem>
         <ToolbarItem>
           <SearchInput
@@ -111,13 +111,12 @@ export const SearchFilterDemo: React.FunctionComponent = () => {
       {toggleGroupItems}
     </ToolbarToggleGroup>
   );
-  const toolbarItems = (
-    <React.Fragment>
-      <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
-        {toggleGroupItems}
-      </ToolbarToggleGroup>
-    </React.Fragment>
-  );
+
+  const [age, setAge] = React.useState('');
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setAge(event.target.value as string);
+  };
 
   return (
     <PageSection>
@@ -129,18 +128,42 @@ export const SearchFilterDemo: React.FunctionComponent = () => {
       <br />
       MUI Search Filter:
       <br />
+      <Paper component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 500 }}>
+          <FormControl sx={{ width: 140 }}>
+          <InputLabel id="demo-simple-select-label">Age</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={age}
+            label="Age"
+            onChange={() => handleChange}
+          >
+            <MenuItem value={10}>Ten</MenuItem>
+            <MenuItem value={20}>Twenty</MenuItem>
+            <MenuItem value={30}>Thirty</MenuItem>
+          </Select>
+        </FormControl>
+        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+          <SearchIcon />
+        </IconButton>
+        <InputBase
+          sx={{ ml: 1, flex: 1 }}
+          placeholder="Search Google Maps"
+          inputProps={{ 'aria-label': 'search google maps' }}
+        />
+      </Paper>
       <br />
       <br />
       PF Search Filter:
       <br />
-      <Toolbar
+      <PFToolbar
         id="toolbar-consumer-managed-toggle-groups"
         isExpanded={isExpanded}
         className="pf-m-toggle-group-container"
         toggleIsExpanded={toggleIsExpanded}
       >
         <ToolbarContent>{items}</ToolbarContent>
-      </Toolbar>
+      </PFToolbar>
     </PageSection>
   );
 };
