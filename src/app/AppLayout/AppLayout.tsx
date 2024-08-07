@@ -32,7 +32,6 @@ const AppLayout: React.FunctionComponent<IAppLayout> = ({ children }) => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).isSwitched = !isChecked;
-    console.log('~~~get switched value~~~', (window as any).isSwitched);
   }, [(window as any).isSwitched]);
 
   const handleChange = (_event: React.FormEvent<HTMLInputElement>, checked: boolean) => {

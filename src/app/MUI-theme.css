@@ -26,7 +26,7 @@
   --mui-alert-warning-font-weight: 400;
 
   --mui-button-font-weight: 500;
-  
+
   --pf-t--global--border--width--box--status--default: 1px;
   --pf-t--global--border--radius--pill: 4px;
   --pf-t--global--border--radius--medium: 4px;
@@ -194,4 +194,17 @@
   --pf-v6-c-tab-content__body--m-padding--PaddingBlockStart: var(--pf-t--global--spacer--lg);
   --pf-v6-c-tab-content__body--m-padding--PaddingInlineEnd: var(--pf-t--global--spacer--lg);
   --pf-v6-c-tab-content__body--m-padding--PaddingInlineStart: var(--pf-t--global--spacer--lg);
+}
+
+.mui-theme .pf-v6-c-label {
+  --pf-v6-c-label--BorderRadius: 16px;
+  --pf-v6-c-label--FontSize: 0.8125rem;
+  --pf-v6-c-label--PaddingInlineStart: 0;
+  --pf-v6-c-label--PaddingInlineEnd: 0;
+  height: 24px;
+}
+
+.mui-theme .pf-v6-c-label__text {
+  padding-right: 8px;
+  padding-left: 8px;
 }

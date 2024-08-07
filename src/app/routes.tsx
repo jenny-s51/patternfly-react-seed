@@ -8,6 +8,7 @@ import { ButtonDemo } from "./Components/Button/ButtonDemo";
 import { TabsDemo } from "./Components/Tabs/TabsDemo";
 import { TableDemo } from "./Components/Table/TableDemo";
 import { Dashboard } from "./Dashboard/Dashboard";
+import { LabelDemo } from "./Components/Label/LabelDemo";
 
 let routeFocusTimer: number;
 export interface IAppRoute {
@@ -59,6 +60,13 @@ const routes: AppRouteConfig[] = [
         exact: true,
         label: 'Dropdown Demo',
         path: '/components/dropdown',
+        title: 'PatternFly Seed | Profile Settings',
+      },
+      {
+        component: LabelDemo,
+        exact: true,
+        label: 'Label Demo',
+        path: '/components/label',
         title: 'PatternFly Seed | Profile Settings',
       },
       {

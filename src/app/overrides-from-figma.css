@@ -434,7 +434,7 @@
     --pf-t--global--color--disabled--300: var(--pf-t--color--gray--600);
     --pf-t--global--color--favorite--100: var(--pf-t--color--yellow--600);
     --pf-t--global--color--favorite--200: var(--pf-t--color--yellow--700);
-    --pf-t--global--color--nonstatus--blue--100: var(--pf-t--color--blue--100);
+    --pf-t--global--color--nonstatus--blue--100: var(--pf-t--color--blue--500);
     --pf-t--global--color--nonstatus--blue--200: var(--pf-t--color--blue--200);
     --pf-t--global--color--nonstatus--blue--300: var(--pf-t--color--blue--300);
     --pf-t--global--color--nonstatus--gray--100: var(--pf-t--color--gray--100);
@@ -840,7 +840,7 @@
     --pf-t--global--text--color--brand--default: var(--pf-t--global--color--brand--default);
     --pf-t--global--text--color--brand--hover: var(--pf-t--global--color--brand--hover);
     --pf-t--global--text--color--nonstatus--on-blue--clicked: var(--pf-t--global--text--color--regular);
-    --pf-t--global--text--color--nonstatus--on-blue--default: var(--pf-t--global--text--color--regular);
+    --pf-t--global--text--color--nonstatus--on-blue--default: var(--pf-t--global--text--color--inverse);
     --pf-t--global--text--color--nonstatus--on-blue--hover: var(--pf-t--global--text--color--regular);
     --pf-t--global--text--color--nonstatus--on-gray--clicked: var(--pf-t--global--text--color--regular);
     --pf-t--global--text--color--nonstatus--on-gray--default: var(--pf-t--global--text--color--regular);

@@ -151,6 +151,31 @@ exports[`App tests should render default App component 1`] = `
             </g>
           </svg>
         </span>
+        <label
+          class="pf-v6-c-switch"
+          data-ouia-component-id="BasicSwitch"
+          data-ouia-component-type="PF6/Switch"
+          data-ouia-safe="true"
+          for="simple-switch"
+        >
+          <input
+            aria-labelledby="simple-switch-label"
+            class="pf-v6-c-switch__input"
+            id="simple-switch"
+            role="switch"
+            type="checkbox"
+          />
+          <span
+            class="pf-v6-c-switch__toggle"
+          />
+          <span
+            aria-hidden="true"
+            class="pf-v6-c-switch__label"
+            id="simple-switch-label"
+          >
+            Toggle MUI Theme
+          </span>
+        </label>
       </div>
     </header>
     <div
@@ -190,19 +215,6 @@ exports[`App tests should render default App component 1`] = `
             </li>
             <li
               class="pf-v6-c-nav__item"
-              data-ouia-component-id="OUIA-Generated-NavItem-2"
-              data-ouia-component-type="PF6/NavItem"
-              data-ouia-safe="true"
-            >
-              <a
-                class="pf-v6-c-nav__link"
-                href="/support"
-              >
-                Support
-              </a>
-            </li>
-            <li
-              class="pf-v6-c-nav__item"
               data-ouia-component-id="OUIA-Generated-NavExpandable-1"
               data-ouia-component-type="PF6/NavExpandable"
               data-ouia-safe="true"
@@ -210,9 +222,9 @@ exports[`App tests should render default App component 1`] = `
               <button
                 aria-expanded="false"
                 class="pf-v6-c-nav__link"
-                id="Settings-2"
+                id="Components-1"
               >
-                Settings
+                Components
                 <span
                   class="pf-v6-c-nav__toggle"
                 >
@@ -236,7 +248,7 @@ exports[`App tests should render default App component 1`] = `
                 </span>
               </button>
               <section
-                aria-labelledby="Settings-2"
+                aria-labelledby="Components-1"
                 class="pf-v6-c-nav__subnav"
                 hidden=""
               >
@@ -246,15 +258,28 @@ exports[`App tests should render default App component 1`] = `
                 >
                   <li
                     class="pf-v6-c-nav__item"
+                    data-ouia-component-id="OUIA-Generated-NavItem-2"
+                    data-ouia-component-type="PF6/NavItem"
+                    data-ouia-safe="true"
+                  >
+                    <a
+                      class="pf-v6-c-nav__link"
+                      href="/components/alert"
+                    >
+                      Alert Demo
+                    </a>
+                  </li>
+                  <li
+                    class="pf-v6-c-nav__item"
                     data-ouia-component-id="OUIA-Generated-NavItem-3"
                     data-ouia-component-type="PF6/NavItem"
                     data-ouia-safe="true"
                   >
                     <a
                       class="pf-v6-c-nav__link"
-                      href="/settings/general"
+                      href="/components/button"
                     >
-                      General
+                      Button Demo
                     </a>
                   </li>
                   <li
@@ -265,9 +290,48 @@ exports[`App tests should render default App component 1`] = `
                   >
                     <a
                       class="pf-v6-c-nav__link"
-                      href="/settings/profile"
+                      href="/components/dropdown"
                     >
-                      Profile
+                      Dropdown Demo
+                    </a>
+                  </li>
+                  <li
+                    class="pf-v6-c-nav__item"
+                    data-ouia-component-id="OUIA-Generated-NavItem-5"
+                    data-ouia-component-type="PF6/NavItem"
+                    data-ouia-safe="true"
+                  >
+                    <a
+                      class="pf-v6-c-nav__link"
+                      href="/components/label"
+                    >
+                      Label Demo
+                    </a>
+                  </li>
+                  <li
+                    class="pf-v6-c-nav__item"
+                    data-ouia-component-id="OUIA-Generated-NavItem-6"
+                    data-ouia-component-type="PF6/NavItem"
+                    data-ouia-safe="true"
+                  >
+                    <a
+                      class="pf-v6-c-nav__link"
+                      href="/components/tabs"
+                    >
+                      Tabs Demo
+                    </a>
+                  </li>
+                  <li
+                    class="pf-v6-c-nav__item"
+                    data-ouia-component-id="OUIA-Generated-NavItem-7"
+                    data-ouia-component-type="PF6/NavItem"
+                    data-ouia-safe="true"
+                  >
+                    <a
+                      class="pf-v6-c-nav__link"
+                      href="/components/table"
+                    >
+                      Table Demo
                     </a>
                   </li>
                 </ul>
@@ -291,14 +355,31 @@ exports[`App tests should render default App component 1`] = `
           <div
             class="pf-v6-c-page__main-body"
           >
-            <h1
-              class="pf-v6-c-title pf-m-lg"
-              data-ouia-component-id="OUIA-Generated-Title-1"
-              data-ouia-component-type="PF6/Title"
-              data-ouia-safe="true"
+            <div
+              class="pf-v6-c-content"
             >
-              Dashboard Page Title!
-            </h1>
+              <h1
+                class="pf-v6-c-content--h1"
+                data-ouia-component-id="OUIA-Generated-Text-1"
+                data-ouia-component-type="PF6/Text"
+                data-ouia-safe="true"
+                data-pf-content="true"
+              >
+                MUI / PF6 POC
+              </h1>
+              <p
+                class="pf-v6-c-content--p"
+                data-ouia-component-id="OUIA-Generated-Text-2"
+                data-ouia-component-type="PF6/Text"
+                data-ouia-safe="true"
+                data-pf-content="true"
+              >
+                This is a Material UI theme POC, prioritizing components from the model registry UI, built on top of PatternFly 6 design tokens.
+                <br />
+                <br />
+                Navigate to Components to view themed PF components, and toggle the switch above to apply MUI theming.
+              </p>
+            </div>
           </div>
         </section>
       </main>
