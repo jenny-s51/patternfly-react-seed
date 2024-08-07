@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { getTheme } from "@app/MUI-theme";
 
 export const DropdownDemo: React.FunctionComponent = () => {
 
@@ -26,6 +27,8 @@ export const DropdownDemo: React.FunctionComponent = () => {
   };
 
   const [isOpen, setIsOpen] = React.useState(false);
+
+  getTheme();
 
 
   const onToggleClick = () => {

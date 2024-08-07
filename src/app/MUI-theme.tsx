@@ -1,15 +1,14 @@
 // The import can be in any file that is included in your `tsconfig.json`
 import type {} from '@mui/material/themeCssVarsAugmentation';
-// import { useTheme as muiUseTheme } from '@mui/material/styles';
+import { useTheme as muiUseTheme } from '@mui/material/styles';
 
 // const html = document.documentElement;
 
 // TODO: apply useTheme and access theme object
 export const getTheme = () => {
-  // console.log (theme);
   // console.log (theme.palette.action.active);
-  // const theme = muiUseTheme();
-  // console.log (theme);
+  const theme = muiUseTheme();
+  console.log(theme);
   // console.log (window.theme);
 };
 
