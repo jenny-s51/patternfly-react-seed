@@ -19,7 +19,7 @@ export const PaginationDemo: React.FunctionComponent = () => {
   };
 
   const [pfPage, setPfPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(20);
+  const [perPage, setPerPage] = React.useState(10);
 
   const onSetPage = (_event: React.MouseEvent | React.KeyboardEvent | MouseEvent, newPage: number) => {
     setPfPage(newPage);
@@ -64,12 +64,14 @@ export const PaginationDemo: React.FunctionComponent = () => {
       PF Pagination:
       <br />
       <Pagination
-      itemCount={523}
+      itemCount={100}
       perPage={perPage}
       page={pfPage}
       onSetPage={onSetPage}
       widgetId="compact-example"
       onPerPageSelect={onPerPageSelect}
+      titles={{perPageSuffix: '', items: ''}}
+      perPageOptions={[{ title: '10', value: 10 }, { title: '25', value: 25 }, { title: '50', value: 50 }, { title: '100', value: 100 } ]}
       isCompact
     />
     </PageSection>

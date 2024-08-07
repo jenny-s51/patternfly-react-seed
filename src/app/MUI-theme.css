@@ -208,6 +208,11 @@
   order: -1;
 }
 
+.mui-theme .pf-v6-c-pagination__page-menu .pf-v6-c-menu-toggle {
+  --pf-v6-c-menu-toggle--expanded--BackgroundColor: var(--pf-v6-c-menu-toggle--m-plain--expanded--BackgroundColor);
+  text-transform: none;
+}
+
 .mui-theme .pf-v6-c-pagination__page-menu::before {
   content: "Rows per page:";
 }
