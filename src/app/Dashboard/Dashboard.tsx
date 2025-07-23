@@ -1,3 +1,4 @@
+import { clusterData, criticalIssues, logs } from './test-data/cluster-data';
 import * as React from 'react';
 import {
   Badge,
@@ -10,7 +11,6 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
-  Divider,
   Dropdown,
   DropdownItem,
   DropdownList,
@@ -53,165 +53,88 @@ import {
   ToolbarItem,
   ToolbarToggleGroup,
 } from '@patternfly/react-core';
-
 import { ExpandableRowContent, Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import {
-  BellIcon,
   ChartLineIcon,
   CheckCircleIcon,
+  CubesIcon,
   DatabaseIcon,
   EllipsisVIcon,
   ExclamationTriangleIcon,
   ExternalLinkAltIcon,
   FilterIcon,
+  HeartbeatIcon,
   InfoCircleIcon,
   MonitoringIcon,
   NetworkIcon,
   SearchIcon,
-  ServerIcon,
   TimesCircleIcon,
 } from '@patternfly/react-icons';
 
-// Mock data for demonstration
-const clusterData = [
+type Demo = {
+  id: string;
+  name: string;
+  props?: { [key: string]: any };
+  fullPageOnly?: boolean;
+};
+
+const demos: Demo[] = [
   {
-    id: 'cluster-1',
-    name: 'Production East',
-    status: 'healthy',
-    health: 95,
-    nodes: 12,
-    pods: 248,
-    cpu: 65,
-    memory: 72,
-    issues: 1,
-    lastUpdated: '2 minutes ago',
-    region: 'us-east-1',
-    version: '1.28.2',
-  },
-  {
-    id: 'cluster-2',
-    name: 'Production West',
-    status: 'warning',
-    health: 78,
-    nodes: 8,
-    pods: 156,
-    cpu: 89,
-    memory: 94,
-    issues: 3,
-    lastUpdated: '1 minute ago',
-    region: 'us-west-1',
-    version: '1.28.1',
-  },
-  {
-    id: 'cluster-3',
-    name: 'Development',
-    status: 'critical',
-    health: 45,
-    nodes: 4,
-    pods: 67,
-    cpu: 25,
-    memory: 38,
-    issues: 8,
-    lastUpdated: '5 minutes ago',
-    region: 'us-central-1',
-    version: '1.27.8',
-  },
-  {
-    id: 'cluster-4',
-    name: 'Staging',
-    status: 'healthy',
-    health: 88,
-    nodes: 6,
-    pods: 134,
-    cpu: 55,
-    memory: 67,
-    issues: 0,
-    lastUpdated: '3 minutes ago',
-    region: 'eu-west-1',
-    version: '1.28.2',
+    id: 'dashboard-demo',
+    name: 'Dashboard Demo',
   },
 ];
 
-const topIssues = [
+const podStatusData = [
   {
-    id: 'issue-1',
-    severity: 'critical',
-    cluster: 'Development',
-    message: 'Node disk space above 90%',
-    affected: '2 nodes',
-    timestamp: '5 minutes ago',
+    name: 'Running',
+    count: 350,
   },
   {
-    id: 'issue-2',
-    severity: 'warning',
-    cluster: 'Production West',
-    message: 'High CPU utilization detected',
-    affected: '3 pods',
-    timestamp: '8 minutes ago',
+    name: 'Pending',
+    count: 20,
   },
   {
-    id: 'issue-3',
-    severity: 'warning',
-    cluster: 'Production West',
-    message: 'Memory pressure on nodes',
-    affected: '2 nodes',
-    timestamp: '12 minutes ago',
+    name: 'Failed',
+    count: 5,
   },
   {
-    id: 'issue-4',
-    severity: 'info',
-    cluster: 'Production East',
-    message: 'Pod restart detected',
-    affected: '1 pod',
-    timestamp: '15 minutes ago',
+    name: 'Succeeded',
+    count: 100,
   },
 ];
 
-const logs = [
-  {
-    id: 'log-1',
-    timestamp: '2024-01-15 14:32:15',
-    level: 'ERROR',
-    cluster: 'Development',
-    component: 'kubelet',
-    message: 'Failed to pull image "nginx:latest": rpc error: code = Unknown desc = Error response from daemon',
-  },
-  {
-    id: 'log-2',
-    timestamp: '2024-01-15 14:31:45',
-    level: 'WARN',
-    cluster: 'Production West',
-    component: 'kube-scheduler',
-    message: 'Failed to schedule pod: 0/8 nodes are available: 8 Insufficient memory',
-  },
-  {
-    id: 'log-3',
-    timestamp: '2024-01-15 14:30:22',
-    level: 'INFO',
-    cluster: 'Production East',
-    component: 'kube-controller-manager',
-    message: 'Successfully created new endpoint slice for service "web-service"',
-  },
-];
+const getProgressVariant = (status) => {
+  switch (status) {
+    case 'healthy':
+      return ProgressVariant.success;
+    case 'warning':
+      return ProgressVariant.warning;
+    case 'critical':
+      return ProgressVariant.danger;
+    default:
+      return ProgressVariant.success;
+  }
+};
 
 const Dashboard: React.FunctionComponent = () => {
-  const [selectedCluster, setSelectedCluster] = React.useState<string | null>(null);
+  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
   const [searchValue, setSearchValue] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState('');
-  const [regionFilter, setRegionFilter] = React.useState('');
-  const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
   const [isStatusFilterOpen, setIsStatusFilterOpen] = React.useState(false);
+  const [regionFilter, setRegionFilter] = React.useState('');
   const [isRegionFilterOpen, setIsRegionFilterOpen] = React.useState(false);
-  const [isActionDropdownOpen, setIsActionDropdownOpen] = React.useState<Record<string, boolean>>({});
+  const [selectedCluster, setSelectedCluster] = React.useState<string | null>(null);
+  const [isActionDropdownOpen, setIsActionDropdownOpen] = React.useState<{
+    [key: string]: boolean;
+  }>({});
   const [expandedClusterNames, setExpandedClusterNames] = React.useState<string[]>([]);
-
   const setClusterExpanded = (cluster: (typeof clusterData)[0], isExpanding = true) =>
     setExpandedClusterNames((prevExpanded) => {
-      const otherExpandedClusterNames = prevExpanded.filter((name) => name !== cluster.name);
+      const otherExpandedClusterNames = prevExpanded.filter((n) => n !== cluster.name);
       return isExpanding ? [...otherExpandedClusterNames, cluster.name] : otherExpandedClusterNames;
     });
   const isClusterExpanded = (cluster: (typeof clusterData)[0]) => expandedClusterNames.includes(cluster.name);
-
   // Use semantic design tokens instead of hardcoded colors
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -239,19 +162,6 @@ const Dashboard: React.FunctionComponent = () => {
             <InfoCircleIcon />
           </Icon>
         );
-    }
-  };
-
-  const getProgressVariant = (status: string): ProgressVariant => {
-    switch (status) {
-      case 'healthy':
-        return ProgressVariant.success;
-      case 'warning':
-        return ProgressVariant.warning;
-      case 'critical':
-        return ProgressVariant.danger;
-      default:
-        return ProgressVariant.success;
     }
   };
 
@@ -283,7 +193,6 @@ const Dashboard: React.FunctionComponent = () => {
         );
     }
   };
-
   const filteredClusters = React.useMemo(() => {
     return clusterData.filter((cluster) => {
       const matchesSearch = cluster.name.toLowerCase().includes(searchValue.toLowerCase());
@@ -292,19 +201,16 @@ const Dashboard: React.FunctionComponent = () => {
       return matchesSearch && matchesStatus && matchesRegion;
     });
   }, [searchValue, statusFilter, regionFilter]);
-
   const totalClusters = clusterData.length;
   const healthyClusters = clusterData.filter((c) => c.status === 'healthy').length;
   const warningClusters = clusterData.filter((c) => c.status === 'warning').length;
   const totalIssues = clusterData.reduce((sum, cluster) => sum + cluster.issues, 0);
-
   const onToggleActionDropdown = React.useCallback((clusterId: string) => {
     setIsActionDropdownOpen((prev) => ({
       ...prev,
       [clusterId]: !prev[clusterId],
     }));
   }, []);
-
   const onClusterDrillDown = React.useCallback((clusterId: string) => {
     setSelectedCluster(clusterId);
     setActiveTabKey(1); // Switch to detailed view tab
@@ -315,7 +221,6 @@ const Dashboard: React.FunctionComponent = () => {
     setStatusFilter('');
     setRegionFilter('');
   }, []);
-
   const troubleshootingTools = [
     {
       name: 'Pod Logs',
@@ -338,7 +243,6 @@ const Dashboard: React.FunctionComponent = () => {
       description: 'Cluster events and timeline analysis',
     },
   ];
-
   // Overview Tab Content using proper component composition
   const overviewTab = (
     <Stack hasGutter>
@@ -350,7 +254,7 @@ const Dashboard: React.FunctionComponent = () => {
               <Split hasGutter>
                 <SplitItem>
                   <Icon size="lg">
-                    <ServerIcon />
+                    <CubesIcon />
                   </Icon>
                 </SplitItem>
                 <SplitItem isFilled>
@@ -429,7 +333,6 @@ const Dashboard: React.FunctionComponent = () => {
           </Card>
         </GridItem>
       </Grid>
-
       {/* Filters and Search using proper Toolbar patterns */}
       <Toolbar
         clearAllFilters={onClearFilters}
@@ -516,7 +419,6 @@ const Dashboard: React.FunctionComponent = () => {
           </ToolbarToggleGroup>
         </ToolbarContent>
       </Toolbar>
-
       {/* Cluster Table */}
       <Card>
         <CardBody>
@@ -524,12 +426,12 @@ const Dashboard: React.FunctionComponent = () => {
             <Thead>
               <Tr>
                 <Th screenReaderText="Row expansion" />
-                <Th>Cluster</Th>
+                <Th>Name</Th>
                 <Th>Status</Th>
                 <Th>Issues</Th>
-                <Th>Last Updated</Th>
                 <Th>Region</Th>
-                <Th></Th>
+                <Th>Version</Th>
+                <Th />
               </Tr>
             </Thead>
             {filteredClusters.map((cluster, rowIndex) => (
@@ -540,32 +442,25 @@ const Dashboard: React.FunctionComponent = () => {
                       rowIndex,
                       isExpanded: isClusterExpanded(cluster),
                       onToggle: () => setClusterExpanded(cluster, !isClusterExpanded(cluster)),
-                      expandId: 'cluster-expandable-table',
+                      expandId: `expandable-cluster-row-${cluster.id}`,
                     }}
                   />
-                  <Td dataLabel="Cluster">
-                    <Split hasGutter>
-                      <SplitItem>{getStatusIcon(cluster.status)}</SplitItem>
-                      <SplitItem>
-                        <Button
-                          variant="link"
-                          isInline
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onClusterDrillDown(cluster.id);
-                          }}
-                          aria-label={`View details for ${cluster.name}`}
-                        >
-                          <strong>{cluster.name}</strong>
-                        </Button>
-                      </SplitItem>
-                    </Split>
+                  <Td dataLabel="Name">
+                    <Button
+                      variant="link"
+                      isInline
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onClusterDrillDown(cluster.id);
+                      }}
+                      aria-label={`View details for ${cluster.name}`}
+                    >
+                      <strong>{cluster.name}</strong>
+                    </Button>
                   </Td>
                   <Td dataLabel="Status">
                     <Label
-                      color={
-                        cluster.status === 'healthy' ? 'green' : cluster.status === 'warning' ? 'orange' : 'red'
-                      }
+                      color={cluster.status === 'healthy' ? 'green' : cluster.status === 'warning' ? 'orange' : 'red'}
                       variant="filled"
                     >
                       {cluster.status.charAt(0).toUpperCase() + cluster.status.slice(1)}
@@ -574,15 +469,12 @@ const Dashboard: React.FunctionComponent = () => {
                   <Td dataLabel="Issues">
                     {cluster.issues > 0 ? <Badge isRead={false}>{cluster.issues}</Badge> : <span>—</span>}
                   </Td>
-                  <Td dataLabel="Last Updated">
-                    <Content component="small">{cluster.lastUpdated}</Content>
-                  </Td>
-                  <Td dataLabel="Region">
-                    <Badge>{cluster.region}</Badge>
-                  </Td>
-                  <Td isActionCell>
+                  <Td dataLabel="Region">{cluster.region}</Td>
+                  <Td dataLabel="Version">{cluster.version}</Td>
+                  <Td dataLabel="Actions" isActionCell>
                     <Dropdown
                       isOpen={isActionDropdownOpen[cluster.id] || false}
+                      onSelect={() => onToggleActionDropdown(cluster.id)}
                       onOpenChange={(isOpen: boolean) =>
                         setIsActionDropdownOpen((prev) => ({ ...prev, [cluster.id]: isOpen }))
                       }
@@ -590,62 +482,38 @@ const Dashboard: React.FunctionComponent = () => {
                       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
                         <MenuToggle
                           ref={toggleRef}
+                          isExpanded={isActionDropdownOpen[cluster.id]}
+                          onClick={() => onToggleActionDropdown(cluster.id)}
                           variant="plain"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onToggleActionDropdown(cluster.id);
-                          }}
-                          aria-label={`Actions for ${cluster.name}`}
+                          aria-label={`${cluster.name} actions`}
                         >
                           <EllipsisVIcon />
                         </MenuToggle>
                       )}
                     >
                       <DropdownList>
-                        <DropdownItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            console.log('View details', cluster.id);
-                          }}
-                        >
+                        <DropdownItem key="action-details" onClick={() => onClusterDrillDown(cluster.id)}>
                           View Details
                         </DropdownItem>
-                        <DropdownItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            console.log('View logs', cluster.id);
-                          }}
-                        >
-                          View Logs
-                        </DropdownItem>
-                        <DropdownItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            console.log('Manage', cluster.id);
-                          }}
-                        >
-                          Manage Cluster
-                        </DropdownItem>
-                        <Divider />
-                        <DropdownItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            console.log('Troubleshoot', cluster.id);
-                          }}
-                        >
-                          Troubleshoot
-                        </DropdownItem>
+                        <DropdownItem key="action-scale">Scale Cluster</DropdownItem>
+                        <DropdownItem key="action-reboot">Reboot Nodes</DropdownItem>
+                        <DropdownItem key="action-delete">Delete Cluster</DropdownItem>
                       </DropdownList>
                     </Dropdown>
                   </Td>
                 </Tr>
                 <Tr isExpanded={isClusterExpanded(cluster)}>
                   <Td />
-                  <Td dataLabel="Health & Details" colSpan={3}>
+                  <Td dataLabel="Health" colSpan={3}>
                     <ExpandableRowContent>
                       <DescriptionList>
                         <DescriptionListGroup>
-                          <DescriptionListTerm>Health Score</DescriptionListTerm>
+                          <DescriptionListTerm>
+                            <Icon>
+                              <HeartbeatIcon />
+                            </Icon>{' '}
+                            Health
+                          </DescriptionListTerm>
                           <DescriptionListDescription>
                             <Progress
                               value={cluster.health}
@@ -657,19 +525,12 @@ const Dashboard: React.FunctionComponent = () => {
                           </DescriptionListDescription>
                         </DescriptionListGroup>
                         <DescriptionListGroup>
-                          <DescriptionListTerm>Total Nodes</DescriptionListTerm>
-                          <DescriptionListDescription>{cluster.nodes}</DescriptionListDescription>
+                          <DescriptionListTerm>Uptime</DescriptionListTerm>
+                          <DescriptionListDescription>{cluster.uptime}</DescriptionListDescription>
                         </DescriptionListGroup>
                         <DescriptionListGroup>
-                          <DescriptionListTerm>Total Pods</DescriptionListTerm>
-                          <DescriptionListDescription>{cluster.pods}</DescriptionListDescription>
-                        </DescriptionListGroup>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>Node Status</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            <Label color="green">Ready: {Math.floor(cluster.nodes * 0.9)}</Label>{' '}
-                            <Label color="orange">NotReady: {cluster.nodes - Math.floor(cluster.nodes * 0.9)}</Label>
-                          </DescriptionListDescription>
+                          <DescriptionListTerm>Last Check-in</DescriptionListTerm>
+                          <DescriptionListDescription>{cluster.lastCheckin}</DescriptionListDescription>
                         </DescriptionListGroup>
                       </DescriptionList>
                     </ExpandableRowContent>
@@ -683,10 +544,11 @@ const Dashboard: React.FunctionComponent = () => {
                             <Progress
                               value={cluster.cpu}
                               size={ProgressSize.sm}
+                              measureLocation={ProgressMeasureLocation.outside}
                               variant={
-                                cluster.cpu > 80
+                                cluster.cpu > 90
                                   ? ProgressVariant.danger
-                                  : cluster.cpu > 60
+                                  : cluster.cpu > 75
                                     ? ProgressVariant.warning
                                     : ProgressVariant.success
                               }
@@ -700,10 +562,11 @@ const Dashboard: React.FunctionComponent = () => {
                             <Progress
                               value={cluster.memory}
                               size={ProgressSize.sm}
+                              measureLocation={ProgressMeasureLocation.outside}
                               variant={
-                                cluster.memory > 80
+                                cluster.memory > 90
                                   ? ProgressVariant.danger
-                                  : cluster.memory > 60
+                                  : cluster.memory > 75
                                     ? ProgressVariant.warning
                                     : ProgressVariant.success
                               }
@@ -714,11 +577,13 @@ const Dashboard: React.FunctionComponent = () => {
                         <DescriptionListGroup>
                           <DescriptionListTerm>Pod Status</DescriptionListTerm>
                           <DescriptionListDescription>
-                            <Label color="green">Running: {Math.floor(cluster.pods * 0.85)}</Label>{' '}
-                            <Label color="blue">Pending: {Math.floor(cluster.pods * 0.1)}</Label>{' '}
-                            <Label color="red">
-                              Failed: {cluster.pods - Math.floor(cluster.pods * 0.85) - Math.floor(cluster.pods * 0.1)}
-                            </Label>
+                            <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                              {podStatusData.map((pod, i) => (
+                                <FlexItem key={i}>
+                                  <strong>{pod.count}</strong> {pod.name}
+                                </FlexItem>
+                              ))}
+                            </Flex>
                           </DescriptionListDescription>
                         </DescriptionListGroup>
                       </DescriptionList>
@@ -742,25 +607,17 @@ const Dashboard: React.FunctionComponent = () => {
           )}
         </CardBody>
       </Card>
-
-      {/* Top Issues */}
+      {/* Critical Issues Card */}
       <Card>
         <CardTitle>
           <Title headingLevel="h2" size="lg">
-            <Icon>
-              <BellIcon />
-            </Icon>{' '}
-            Top Issues & Anomalies
+            Critical Issues
           </Title>
         </CardTitle>
         <CardBody>
-          {topIssues.length === 0 ? (
-            <EmptyState titleText="No active issues">
-              <EmptyStateBody>All clusters are running smoothly with no active issues detected.</EmptyStateBody>
-            </EmptyState>
-          ) : (
+          {criticalIssues.length > 0 ? (
             <List isPlain>
-              {topIssues.map((issue) => (
+              {criticalIssues.map((issue) => (
                 <ListItem key={issue.id}>
                   <Split hasGutter>
                     <SplitItem>{getSeverityIcon(issue.severity)}</SplitItem>
@@ -792,12 +649,13 @@ const Dashboard: React.FunctionComponent = () => {
                 </ListItem>
               ))}
             </List>
+          ) : (
+            <EmptyState titleText="No critical issues" />
           )}
         </CardBody>
       </Card>
     </Stack>
   );
-
   // Detailed View Tab Content
   const detailedViewTab = (
     <Stack hasGutter>
@@ -807,15 +665,15 @@ const Dashboard: React.FunctionComponent = () => {
             <Card>
               <CardTitle>
                 <Split hasGutter>
-                  <SplitItem>
-                    <Button variant="link" onClick={() => setSelectedCluster(null)}>
-                      ← Back to Overview
-                    </Button>
-                  </SplitItem>
                   <SplitItem isFilled>
                     <Title headingLevel="h2" size="xl">
-                      {clusterData.find((c) => c.id === selectedCluster)?.name} - Detailed View
+                      {selectedCluster}
                     </Title>
+                  </SplitItem>
+                  <SplitItem>
+                    <Button variant="link" onClick={() => setActiveTabKey(0)}>
+                      Back to Overview
+                    </Button>
                   </SplitItem>
                 </Split>
               </CardTitle>
@@ -834,16 +692,15 @@ const Dashboard: React.FunctionComponent = () => {
               </CardBody>
             </Card>
           </GridItem>
+          {/* Add more detailed cards for metrics, nodes, etc. */}
         </Grid>
       ) : (
-        <EmptyState>
-          <EmptyStateHeader titleText="Select a cluster to view details" headingLevel="h2" />
+        <EmptyState titleText="No cluster selected">
           <EmptyStateBody>Click on a cluster from the overview to see detailed information.</EmptyStateBody>
         </EmptyState>
       )}
     </Stack>
   );
-
   // Logs Tab Content
   const logsTab = (
     <Stack hasGutter>
@@ -858,26 +715,14 @@ const Dashboard: React.FunctionComponent = () => {
             {logs.map((log) => (
               <ListItem key={log.id}>
                 <Split hasGutter>
-                  <SplitItem>
-                    <Label color={log.level === 'ERROR' ? 'red' : log.level === 'WARN' ? 'orange' : 'blue'}>
-                      {log.level}
-                    </Label>
-                  </SplitItem>
-                  <SplitItem>
-                    <Content component="small">{log.timestamp}</Content>
-                  </SplitItem>
-                  <SplitItem>
-                    <Badge>{log.cluster}</Badge>
-                  </SplitItem>
+                  <SplitItem>{getSeverityIcon(log.severity)}</SplitItem>
                   <SplitItem isFilled>
                     <Content>
-                      <strong>{log.component}:</strong> {log.message}
+                      <strong>
+                        [{log.timestamp}] [{log.cluster}] [{log.source}]
+                      </strong>{' '}
+                      {log.message}
                     </Content>
-                  </SplitItem>
-                  <SplitItem>
-                    <Button variant="link" size="sm">
-                      View Full Log
-                    </Button>
                   </SplitItem>
                 </Split>
               </ListItem>
@@ -887,7 +732,6 @@ const Dashboard: React.FunctionComponent = () => {
       </Card>
     </Stack>
   );
-
   // Troubleshooting Tab Content
   const troubleshootingTab = (
     <Stack hasGutter>
@@ -922,7 +766,6 @@ const Dashboard: React.FunctionComponent = () => {
           ))}
         </Gallery>
       </PageSection>
-
       <PageSection>
         <Stack hasGutter>
           <Title headingLevel="h3" size="lg">
@@ -946,7 +789,6 @@ const Dashboard: React.FunctionComponent = () => {
       </PageSection>
     </Stack>
   );
-
   return (
     <PageSection hasBodyWrapper={false}>
       <Stack hasGutter className="pf-v6-u-mb-lg">
@@ -965,7 +807,6 @@ const Dashboard: React.FunctionComponent = () => {
             </Button>
           </SplitItem>
         </Split>
-
         <Tabs
           activeKey={activeTabKey}
           onSelect={(_event, tabIndex) => setActiveTabKey(tabIndex)}
