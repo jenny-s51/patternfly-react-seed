@@ -1,0 +1,1124 @@
+0a1
+> import { clusterData, criticalIssues, logs } from './test-data/cluster-data';
+13d13
+<   Divider,
+17a18
+>   EmptyStateActions,
+18a20
+>   EmptyStateFooter,
+39a42
+>   Stack,
+47a51,52
+>   ToolbarFilter,
+>   ToolbarGroup,
+48a54
+>   ToolbarToggleGroup,
+50d55
+< 
+53d57
+<   BellIcon,
+55a60
+>   CubesIcon,
+60a66
+>   HeartbeatIcon,
+65d70
+<   ServerIcon,
+69,70c74,81
+< // Mock data for demonstration
+< const clusterData = [
+---
+> type Demo = {
+>   id: string;
+>   name: string;
+>   props?: { [key: string]: any };
+>   fullPageOnly?: boolean;
+> };
+> 
+> const demos: Demo[] = [
+72,83c83,84
+<     id: 'cluster-1',
+<     name: 'Production East',
+<     status: 'healthy',
+<     health: 95,
+<     nodes: 12,
+<     pods: 248,
+<     cpu: 65,
+<     memory: 72,
+<     issues: 1,
+<     lastUpdated: '2 minutes ago',
+<     region: 'us-east-1',
+<     version: '1.28.2',
+---
+>     id: 'dashboard-demo',
+>     name: 'Dashboard Demo',
+85,126d85
+<   {
+<     id: 'cluster-2',
+<     name: 'Production West',
+<     status: 'warning',
+<     health: 78,
+<     nodes: 8,
+<     pods: 156,
+<     cpu: 89,
+<     memory: 94,
+<     issues: 3,
+<     lastUpdated: '1 minute ago',
+<     region: 'us-west-1',
+<     version: '1.28.1',
+<   },
+<   {
+<     id: 'cluster-3',
+<     name: 'Development',
+<     status: 'critical',
+<     health: 45,
+<     nodes: 4,
+<     pods: 67,
+<     cpu: 25,
+<     memory: 38,
+<     issues: 8,
+<     lastUpdated: '5 minutes ago',
+<     region: 'us-central-1',
+<     version: '1.27.8',
+<   },
+<   {
+<     id: 'cluster-4',
+<     name: 'Staging',
+<     status: 'healthy',
+<     health: 88,
+<     nodes: 6,
+<     pods: 134,
+<     cpu: 55,
+<     memory: 67,
+<     issues: 0,
+<     lastUpdated: '3 minutes ago',
+<     region: 'eu-west-1',
+<     version: '1.28.2',
+<   },
+129c88
+< const topIssues = [
+---
+> const podStatusData = [
+131,136c90,91
+<     id: 'issue-1',
+<     severity: 'critical',
+<     cluster: 'Development',
+<     message: 'Node disk space above 90%',
+<     affected: '2 nodes',
+<     timestamp: '5 minutes ago',
+---
+>     name: 'Running',
+>     count: 350,
+139,144c94,95
+<     id: 'issue-2',
+<     severity: 'warning',
+<     cluster: 'Production West',
+<     message: 'High CPU utilization detected',
+<     affected: '3 pods',
+<     timestamp: '8 minutes ago',
+---
+>     name: 'Pending',
+>     count: 20,
+147,152c98,99
+<     id: 'issue-3',
+<     severity: 'warning',
+<     cluster: 'Production West',
+<     message: 'Memory pressure on nodes',
+<     affected: '2 nodes',
+<     timestamp: '12 minutes ago',
+---
+>     name: 'Failed',
+>     count: 5,
+155,160c102,103
+<     id: 'issue-4',
+<     severity: 'info',
+<     cluster: 'Production East',
+<     message: 'Pod restart detected',
+<     affected: '1 pod',
+<     timestamp: '15 minutes ago',
+---
+>     name: 'Succeeded',
+>     count: 100,
+164,189c107,118
+< const logs = [
+<   {
+<     id: 'log-1',
+<     timestamp: '2024-01-15 14:32:15',
+<     level: 'ERROR',
+<     cluster: 'Development',
+<     component: 'kubelet',
+<     message: 'Failed to pull image "nginx:latest": rpc error: code = Unknown desc = Error response from daemon',
+<   },
+<   {
+<     id: 'log-2',
+<     timestamp: '2024-01-15 14:31:45',
+<     level: 'WARN',
+<     cluster: 'Production West',
+<     component: 'kube-scheduler',
+<     message: 'Failed to schedule pod: 0/8 nodes are available: 8 Insufficient memory',
+<   },
+<   {
+<     id: 'log-3',
+<     timestamp: '2024-01-15 14:30:22',
+<     level: 'INFO',
+<     cluster: 'Production East',
+<     component: 'kube-controller-manager',
+<     message: 'Successfully created new endpoint slice for service "web-service"',
+<   },
+< ];
+---
+> const getProgressVariant = (status) => {
+>   switch (status) {
+>     case 'healthy':
+>       return ProgressVariant.success;
+>     case 'warning':
+>       return ProgressVariant.warning;
+>     case 'critical':
+>       return ProgressVariant.danger;
+>     default:
+>       return ProgressVariant.success;
+>   }
+> };
+192c121
+<   const [selectedCluster, setSelectedCluster] = React.useState<string | null>(null);
+---
+>   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
+195,196d123
+<   const [regionFilter, setRegionFilter] = React.useState('');
+<   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
+197a125
+>   const [regionFilter, setRegionFilter] = React.useState('');
+199c127,130
+<   const [isActionDropdownOpen, setIsActionDropdownOpen] = React.useState<Record<string, boolean>>({});
+---
+>   const [selectedCluster, setSelectedCluster] = React.useState<string | null>(null);
+>   const [isActionDropdownOpen, setIsActionDropdownOpen] = React.useState<{
+>     [key: string]: boolean;
+>   }>({});
+201d131
+< 
+204c134
+<       const otherExpandedClusterNames = prevExpanded.filter((name) => name !== cluster.name);
+---
+>       const otherExpandedClusterNames = prevExpanded.filter((n) => n !== cluster.name);
+208c138
+< 
+---
+>   // Use semantic design tokens instead of hardcoded colors
+212c142,146
+<         return <CheckCircleIcon color="var(--pf-v6-global--success-color--100)" />;
+---
+>         return (
+>           <Icon status="success">
+>             <CheckCircleIcon />
+>           </Icon>
+>         );
+214c148,152
+<         return <ExclamationTriangleIcon color="var(--pf-v6-global--warning-color--100)" />;
+---
+>         return (
+>           <Icon status="warning">
+>             <ExclamationTriangleIcon />
+>           </Icon>
+>         );
+216c154,158
+<         return <TimesCircleIcon color="var(--pf-v6-global--danger-color--100)" />;
+---
+>         return (
+>           <Icon status="danger">
+>             <TimesCircleIcon />
+>           </Icon>
+>         );
+218c160,164
+<         return <InfoCircleIcon />;
+---
+>         return (
+>           <Icon>
+>             <InfoCircleIcon />
+>           </Icon>
+>         );
+222,234d167
+<   const getProgressVariant = (status: string): ProgressVariant => {
+<     switch (status) {
+<       case 'healthy':
+<         return ProgressVariant.success;
+<       case 'warning':
+<         return ProgressVariant.warning;
+<       case 'critical':
+<         return ProgressVariant.danger;
+<       default:
+<         return ProgressVariant.success;
+<     }
+<   };
+< 
+238c171,175
+<         return <TimesCircleIcon color="var(--pf-v6-global--danger-color--100)" />;
+---
+>         return (
+>           <Icon status="danger">
+>             <TimesCircleIcon />
+>           </Icon>
+>         );
+240c177,181
+<         return <ExclamationTriangleIcon color="var(--pf-v6-global--warning-color--100)" />;
+---
+>         return (
+>           <Icon status="warning">
+>             <ExclamationTriangleIcon />
+>           </Icon>
+>         );
+242c183,187
+<         return <InfoCircleIcon color="var(--pf-v6-global--info-color--100)" />;
+---
+>         return (
+>           <Icon status="info">
+>             <InfoCircleIcon />
+>           </Icon>
+>         );
+244c189,193
+<         return <InfoCircleIcon />;
+---
+>         return (
+>           <Icon>
+>             <InfoCircleIcon />
+>           </Icon>
+>         );
+247,254c196,203
+< 
+<   const filteredClusters = clusterData.filter((cluster) => {
+<     const matchesSearch = cluster.name.toLowerCase().includes(searchValue.toLowerCase());
+<     const matchesStatus = !statusFilter || cluster.status === statusFilter;
+<     const matchesRegion = !regionFilter || cluster.region === regionFilter;
+<     return matchesSearch && matchesStatus && matchesRegion;
+<   });
+< 
+---
+>   const filteredClusters = React.useMemo(() => {
+>     return clusterData.filter((cluster) => {
+>       const matchesSearch = cluster.name.toLowerCase().includes(searchValue.toLowerCase());
+>       const matchesStatus = !statusFilter || cluster.status === statusFilter;
+>       const matchesRegion = !regionFilter || cluster.region === regionFilter;
+>       return matchesSearch && matchesStatus && matchesRegion;
+>     });
+>   }, [searchValue, statusFilter, regionFilter]);
+259,260c208
+< 
+<   const onToggleActionDropdown = (clusterId: string) => {
+---
+>   const onToggleActionDropdown = React.useCallback((clusterId: string) => {
+265,267c213,214
+<   };
+< 
+<   const onClusterDrillDown = (clusterId: string) => {
+---
+>   }, []);
+>   const onClusterDrillDown = React.useCallback((clusterId: string) => {
+270c217
+<   };
+---
+>   }, []);
+271a219,223
+>   const onClearFilters = React.useCallback(() => {
+>     setSearchValue('');
+>     setStatusFilter('');
+>     setRegionFilter('');
+>   }, []);
+273,276c225,244
+<     { name: 'Pod Logs', icon: <DatabaseIcon />, description: 'View and search pod logs across clusters' },
+<     { name: 'Resource Monitor', icon: <ChartLineIcon />, description: 'Real-time resource utilization metrics' },
+<     { name: 'Network Diagnostics', icon: <NetworkIcon />, description: 'Network connectivity and policy analysis' },
+<     { name: 'Event Timeline', icon: <MonitoringIcon />, description: 'Cluster events and timeline analysis' },
+---
+>     {
+>       name: 'Pod Logs',
+>       icon: <DatabaseIcon />,
+>       description: 'View and search pod logs across clusters',
+>     },
+>     {
+>       name: 'Resource Monitor',
+>       icon: <ChartLineIcon />,
+>       description: 'Real-time resource utilization metrics',
+>     },
+>     {
+>       name: 'Network Diagnostics',
+>       icon: <NetworkIcon />,
+>       description: 'Network connectivity and policy analysis',
+>     },
+>     {
+>       name: 'Event Timeline',
+>       icon: <MonitoringIcon />,
+>       description: 'Cluster events and timeline analysis',
+>     },
+278,279c246
+< 
+<   // Overview Tab Content
+---
+>   // Overview Tab Content using proper component composition
+281c248
+<     <>
+---
+>     <Stack hasGutter>
+290c257
+<                     <ServerIcon />
+---
+>                     <CubesIcon />
+294c261
+<                   <Content>
+---
+>                   <Stack>
+299c266
+<                   </Content>
+---
+>                   </Stack>
+315c282
+<                   <Content>
+---
+>                   <Stack>
+320c287
+<                   </Content>
+---
+>                   </Stack>
+336c303
+<                   <Content>
+---
+>                   <Stack>
+341c308
+<                   </Content>
+---
+>                   </Stack>
+357c324
+<                   <Content>
+---
+>                   <Stack>
+362c329
+<                   </Content>
+---
+>                   </Stack>
+369,371c336,341
+< 
+<       {/* Filters and Search */}
+<       <Toolbar>
+---
+>       {/* Filters and Search using proper Toolbar patterns */}
+>       <Toolbar
+>         clearAllFilters={onClearFilters}
+>         clearFiltersButtonText="Clear all filters"
+>         collapseListedFiltersBreakpoint="xl"
+>       >
+373,425c343,419
+<           <ToolbarItem>
+<             <SearchInput
+<               placeholder="Search clusters..."
+<               value={searchValue}
+<               onChange={(_event, value) => setSearchValue(value)}
+<               onClear={() => setSearchValue('')}
+<             />
+<           </ToolbarItem>
+<           <ToolbarItem>
+<             <Select
+<               id="status-filter"
+<               isOpen={isStatusFilterOpen}
+<               selected={statusFilter}
+<               onSelect={(_event, selection) => {
+<                 setStatusFilter(selection as string);
+<                 setIsStatusFilterOpen(false);
+<               }}
+<               onOpenChange={(isOpen) => setIsStatusFilterOpen(isOpen)}
+<               toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+<                 <MenuToggle ref={toggleRef} onClick={() => setIsStatusFilterOpen(!isStatusFilterOpen)}>
+<                   <FilterIcon /> Status: {statusFilter || 'All'}
+<                 </MenuToggle>
+<               )}
+<             >
+<               <SelectOption value="">All Statuses</SelectOption>
+<               <SelectOption value="healthy">Healthy</SelectOption>
+<               <SelectOption value="warning">Warning</SelectOption>
+<               <SelectOption value="critical">Critical</SelectOption>
+<             </Select>
+<           </ToolbarItem>
+<           <ToolbarItem>
+<             <Select
+<               id="region-filter"
+<               isOpen={isRegionFilterOpen}
+<               selected={regionFilter}
+<               onSelect={(_event, selection) => {
+<                 setRegionFilter(selection as string);
+<                 setIsRegionFilterOpen(false);
+<               }}
+<               onOpenChange={(isOpen) => setIsRegionFilterOpen(isOpen)}
+<               toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+<                 <MenuToggle ref={toggleRef} onClick={() => setIsRegionFilterOpen(!isRegionFilterOpen)}>
+<                   Region: {regionFilter || 'All'}
+<                 </MenuToggle>
+<               )}
+<             >
+<               <SelectOption value="">All Regions</SelectOption>
+<               <SelectOption value="us-east-1">US East 1</SelectOption>
+<               <SelectOption value="us-west-1">US West 1</SelectOption>
+<               <SelectOption value="us-central-1">US Central 1</SelectOption>
+<               <SelectOption value="eu-west-1">EU West 1</SelectOption>
+<             </Select>
+<           </ToolbarItem>
+---
+>           <ToolbarToggleGroup toggleIcon={<FilterIcon />} breakpoint="xl">
+>             <ToolbarGroup>
+>               <ToolbarItem>
+>                 <SearchInput
+>                   placeholder="Search clusters..."
+>                   value={searchValue}
+>                   onChange={(_event, value) => setSearchValue(value)}
+>                   onClear={() => setSearchValue('')}
+>                   aria-label="Search clusters"
+>                 />
+>               </ToolbarItem>
+>             </ToolbarGroup>
+>             <ToolbarGroup>
+>               <ToolbarFilter
+>                 labels={statusFilter ? [statusFilter] : []}
+>                 deleteLabel={() => setStatusFilter('')}
+>                 deleteLabelGroup={() => setStatusFilter('')}
+>                 categoryName="Status"
+>               >
+>                 <Select
+>                   id="status-filter"
+>                   isOpen={isStatusFilterOpen}
+>                   selected={statusFilter}
+>                   onSelect={(_event, selection) => {
+>                     setStatusFilter(selection as string);
+>                     setIsStatusFilterOpen(false);
+>                   }}
+>                   onOpenChange={(isOpen) => setIsStatusFilterOpen(isOpen)}
+>                   toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+>                     <MenuToggle ref={toggleRef} onClick={() => setIsStatusFilterOpen(!isStatusFilterOpen)}>
+>                       <Icon>
+>                         <FilterIcon />
+>                       </Icon>{' '}
+>                       Status: {statusFilter || 'All'}
+>                     </MenuToggle>
+>                   )}
+>                   aria-label="Filter by status"
+>                 >
+>                   <SelectOption value="">All Statuses</SelectOption>
+>                   <SelectOption value="healthy">Healthy</SelectOption>
+>                   <SelectOption value="warning">Warning</SelectOption>
+>                   <SelectOption value="critical">Critical</SelectOption>
+>                 </Select>
+>               </ToolbarFilter>
+>             </ToolbarGroup>
+>             <ToolbarGroup>
+>               <ToolbarFilter
+>                 labels={regionFilter ? [regionFilter] : []}
+>                 deleteLabel={() => setRegionFilter('')}
+>                 deleteLabelGroup={() => setRegionFilter('')}
+>                 categoryName="Region"
+>               >
+>                 <Select
+>                   id="region-filter"
+>                   isOpen={isRegionFilterOpen}
+>                   selected={regionFilter}
+>                   onSelect={(_event, selection) => {
+>                     setRegionFilter(selection as string);
+>                     setIsRegionFilterOpen(false);
+>                   }}
+>                   onOpenChange={(isOpen) => setIsRegionFilterOpen(isOpen)}
+>                   toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+>                     <MenuToggle ref={toggleRef} onClick={() => setIsRegionFilterOpen(!isRegionFilterOpen)}>
+>                       Region: {regionFilter || 'All'}
+>                     </MenuToggle>
+>                   )}
+>                   aria-label="Filter by region"
+>                 >
+>                   <SelectOption value="">All Regions</SelectOption>
+>                   <SelectOption value="us-east-1">US East 1</SelectOption>
+>                   <SelectOption value="us-west-1">US West 1</SelectOption>
+>                   <SelectOption value="us-central-1">US Central 1</SelectOption>
+>                   <SelectOption value="eu-west-1">EU West 1</SelectOption>
+>                 </Select>
+>               </ToolbarFilter>
+>             </ToolbarGroup>
+>           </ToolbarToggleGroup>
+428d421
+< 
+432c425
+<           <Table aria-label="Clusters table" variant="compact">
+---
+>           <Table aria-label="Expandable clusters table" variant="compact">
+436c429
+<                 <Th>Cluster</Th>
+---
+>                 <Th>Name</Th>
+438,439d430
+<                 <Th>CPU</Th>
+<                 <Th>Memory</Th>
+441d431
+<                 <Th>Last Updated</Th>
+443c433,434
+<                 <Th></Th>
+---
+>                 <Th>Version</Th>
+>                 <Th />
+454c445
+<                       expandId: 'cluster-expandable-table',
+---
+>                       expandId: `expandable-cluster-row-${cluster.id}`,
+457,472c448,459
+<                   <Td dataLabel="Cluster">
+<                     <Split hasGutter>
+<                       <SplitItem>{getStatusIcon(cluster.status)}</SplitItem>
+<                       <SplitItem>
+<                         <Button
+<                           variant="link"
+<                           isInline
+<                           onClick={(e) => {
+<                             e.stopPropagation();
+<                             onClusterDrillDown(cluster.id);
+<                           }}
+<                         >
+<                           <strong>{cluster.name}</strong>
+<                         </Button>
+<                       </SplitItem>
+<                     </Split>
+---
+>                   <Td dataLabel="Name">
+>                     <Button
+>                       variant="link"
+>                       isInline
+>                       onClick={(e) => {
+>                         e.stopPropagation();
+>                         onClusterDrillDown(cluster.id);
+>                       }}
+>                       aria-label={`View details for ${cluster.name}`}
+>                     >
+>                       <strong>{cluster.name}</strong>
+>                     </Button>
+482,517d468
+<                   <Td dataLabel="CPU">
+<                     <Split hasGutter>
+<                       <SplitItem>
+<                         <Progress
+<                           value={cluster.cpu}
+<                           size={ProgressSize.sm}
+<                           variant={
+<                             cluster.cpu > 80
+<                               ? ProgressVariant.danger
+<                               : cluster.cpu > 60
+<                                 ? ProgressVariant.warning
+<                                 : ProgressVariant.success
+<                           }
+<                           style={{ width: '60px' }}
+<                         />
+<                       </SplitItem>
+<                     </Split>
+<                   </Td>
+<                   <Td dataLabel="Memory">
+<                     <Split hasGutter>
+<                       <SplitItem>
+<                         <Progress
+<                           value={cluster.memory}
+<                           size={ProgressSize.sm}
+<                           variant={
+<                             cluster.memory > 80
+<                               ? ProgressVariant.danger
+<                               : cluster.memory > 60
+<                                 ? ProgressVariant.warning
+<                                 : ProgressVariant.success
+<                           }
+<                           style={{ width: '60px' }}
+<                         />
+<                       </SplitItem>
+<                     </Split>
+<                   </Td>
+521,527c472,474
+<                   <Td dataLabel="Last Updated">
+<                     <Content component="small">{cluster.lastUpdated}</Content>
+<                   </Td>
+<                   <Td dataLabel="Region">
+<                     <Badge>{cluster.region}</Badge>
+<                   </Td>
+<                   <Td isActionCell>
+---
+>                   <Td dataLabel="Region">{cluster.region}</Td>
+>                   <Td dataLabel="Version">{cluster.version}</Td>
+>                   <Td dataLabel="Actions" isActionCell>
+529a477
+>                       onSelect={() => onToggleActionDropdown(cluster.id)}
+533c481
+<                       popperProps={{ position: 'right' }}
+---
+>                       popperProps={{ position: 'right', appendTo: () => document.body }}
+536a485,486
+>                           isExpanded={isActionDropdownOpen[cluster.id]}
+>                           onClick={() => onToggleActionDropdown(cluster.id)}
+538,542c488
+<                           onClick={(e) => {
+<                             e.stopPropagation();
+<                             onToggleActionDropdown(cluster.id);
+<                           }}
+<                           aria-label={`Actions for ${cluster.name}`}
+---
+>                           aria-label={`${cluster.name} actions`}
+549,554c495
+<                         <DropdownItem
+<                           onClick={(e) => {
+<                             e.stopPropagation();
+<                             console.log('View details', cluster.id);
+<                           }}
+<                         >
+---
+>                         <DropdownItem key="action-details" onClick={() => onClusterDrillDown(cluster.id)}>
+557,581c498,500
+<                         <DropdownItem
+<                           onClick={(e) => {
+<                             e.stopPropagation();
+<                             console.log('View logs', cluster.id);
+<                           }}
+<                         >
+<                           View Logs
+<                         </DropdownItem>
+<                         <DropdownItem
+<                           onClick={(e) => {
+<                             e.stopPropagation();
+<                             console.log('Manage', cluster.id);
+<                           }}
+<                         >
+<                           Manage Cluster
+<                         </DropdownItem>
+<                         <Divider />
+<                         <DropdownItem
+<                           onClick={(e) => {
+<                             e.stopPropagation();
+<                             console.log('Troubleshoot', cluster.id);
+<                           }}
+<                         >
+<                           Troubleshoot
+<                         </DropdownItem>
+---
+>                         <DropdownItem key="action-scale">Scale Cluster</DropdownItem>
+>                         <DropdownItem key="action-reboot">Reboot Nodes</DropdownItem>
+>                         <DropdownItem key="action-delete">Delete Cluster</DropdownItem>
+588c507
+<                   <Td dataLabel="Health & Details" colSpan={3}>
+---
+>                   <Td dataLabel="Health" colSpan={3}>
+592c511,516
+<                           <DescriptionListTerm>Health Score</DescriptionListTerm>
+---
+>                           <DescriptionListTerm>
+>                             <Icon>
+>                               <HeartbeatIcon />
+>                             </Icon>{' '}
+>                             Health
+>                           </DescriptionListTerm>
+598a523
+>                               aria-label={`Health score: ${cluster.health}%`}
+603,604c528,529
+<                           <DescriptionListTerm>Total Nodes</DescriptionListTerm>
+<                           <DescriptionListDescription>{cluster.nodes}</DescriptionListDescription>
+---
+>                           <DescriptionListTerm>Uptime</DescriptionListTerm>
+>                           <DescriptionListDescription>{cluster.uptime}</DescriptionListDescription>
+607,611c532,533
+<                           <DescriptionListTerm>Node Status</DescriptionListTerm>
+<                           <DescriptionListDescription>
+<                             <Label color="green">Ready: {Math.floor(cluster.nodes * 0.9)}</Label>{' '}
+<                             <Label color="orange">NotReady: {cluster.nodes - Math.floor(cluster.nodes * 0.9)}</Label>
+<                           </DescriptionListDescription>
+---
+>                           <DescriptionListTerm>Last Check-in</DescriptionListTerm>
+>                           <DescriptionListDescription>{cluster.lastCheckin}</DescriptionListDescription>
+616c538
+<                   <Td dataLabel="Pods" colSpan={5}>
+---
+>                   <Td dataLabel="Resource Usage" colSpan={3}>
+620,621c542,557
+<                           <DescriptionListTerm>Total Pods</DescriptionListTerm>
+<                           <DescriptionListDescription>{cluster.pods}</DescriptionListDescription>
+---
+>                           <DescriptionListTerm>CPU</DescriptionListTerm>
+>                           <DescriptionListDescription>
+>                             <Progress
+>                               value={cluster.cpu}
+>                               size={ProgressSize.sm}
+>                               measureLocation={ProgressMeasureLocation.outside}
+>                               variant={
+>                                 cluster.cpu > 90
+>                                   ? ProgressVariant.danger
+>                                   : cluster.cpu > 75
+>                                     ? ProgressVariant.warning
+>                                     : ProgressVariant.success
+>                               }
+>                               aria-label={`CPU usage: ${cluster.cpu}%`}
+>                             />
+>                           </DescriptionListDescription>
+623a560,577
+>                           <DescriptionListTerm>Memory</DescriptionListTerm>
+>                           <DescriptionListDescription>
+>                             <Progress
+>                               value={cluster.memory}
+>                               size={ProgressSize.sm}
+>                               measureLocation={ProgressMeasureLocation.outside}
+>                               variant={
+>                                 cluster.memory > 90
+>                                   ? ProgressVariant.danger
+>                                   : cluster.memory > 75
+>                                     ? ProgressVariant.warning
+>                                     : ProgressVariant.success
+>                               }
+>                               aria-label={`Memory usage: ${cluster.memory}%`}
+>                             />
+>                           </DescriptionListDescription>
+>                         </DescriptionListGroup>
+>                         <DescriptionListGroup>
+626,630c580,586
+<                             <Label color="green">Running: {Math.floor(cluster.pods * 0.85)}</Label>{' '}
+<                             <Label color="blue">Pending: {Math.floor(cluster.pods * 0.1)}</Label>{' '}
+<                             <Label color="red">
+<                               Failed: {cluster.pods - Math.floor(cluster.pods * 0.85) - Math.floor(cluster.pods * 0.1)}
+<                             </Label>
+---
+>                             <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+>                               {podStatusData.map((pod, i) => (
+>                                 <FlexItem key={i}>
+>                                   <strong>{pod.count}</strong> {pod.name}
+>                                 </FlexItem>
+>                               ))}
+>                             </Flex>
+642a599,605
+>               <EmptyStateFooter>
+>                 <EmptyStateActions>
+>                   <Button variant="primary" onClick={onClearFilters}>
+>                     Clear filters
+>                   </Button>
+>                 </EmptyStateActions>
+>               </EmptyStateFooter>
+647,648c610
+< 
+<       {/* Top Issues */}
+---
+>       {/* Critical Issues Card */}
+652,655c614
+<             <Icon>
+<               <BellIcon />
+<             </Icon>{' '}
+<             Top Issues & Anomalies
+---
+>             Critical Issues
+659,663c618
+<           {topIssues.length === 0 ? (
+<             <EmptyState titleText="No active issues">
+<               <EmptyStateBody>All clusters are running smoothly with no active issues detected.</EmptyStateBody>
+<             </EmptyState>
+<           ) : (
+---
+>           {criticalIssues.length > 0 ? (
+665c620
+<               {topIssues.map((issue) => (
+---
+>               {criticalIssues.map((issue) => (
+670,672c625,628
+<                       <Content>
+<                         <strong>{issue.message}</strong>
+<                         <br />
+---
+>                       <Stack>
+>                         <Content>
+>                           <strong>{issue.message}</strong>
+>                         </Content>
+676c632
+<                       </Content>
+---
+>                       </Stack>
+679,680c635,645
+<                       <Button variant="link" size="sm">
+<                         Investigate <ExternalLinkAltIcon />
+---
+>                       <Button
+>                         variant="link"
+>                         size="sm"
+>                         component="a"
+>                         href="#"
+>                         target="_blank"
+>                         rel="noopener noreferrer"
+>                         icon={<ExternalLinkAltIcon />}
+>                         iconPosition="right"
+>                       >
+>                         Investigate
+686a652,653
+>           ) : (
+>             <EmptyState titleText="No critical issues" />
+690c657
+<     </>
+---
+>     </Stack>
+692d658
+< 
+695c661
+<     <>
+---
+>     <Stack hasGutter>
+702,706d667
+<                   <SplitItem>
+<                     <Button variant="link" onClick={() => setSelectedCluster(null)}>
+<                       ← Back to Overview
+<                     </Button>
+<                   </SplitItem>
+709c670
+<                       {clusterData.find((c) => c.id === selectedCluster)?.name} - Detailed View
+---
+>                       {selectedCluster}
+711a673,677
+>                   <SplitItem>
+>                     <Button variant="link" onClick={() => setActiveTabKey(0)}>
+>                       Back to Overview
+>                     </Button>
+>                   </SplitItem>
+715,723c681,691
+<                 <Content>Detailed cluster information, metrics, and node-level data would be displayed here.</Content>
+<                 <Content component="p">This view would include:</Content>
+<                 <List>
+<                   <ListItem>Node-level health and resource utilization</ListItem>
+<                   <ListItem>Pod distribution and status</ListItem>
+<                   <ListItem>Network topology and policies</ListItem>
+<                   <ListItem>Storage and persistent volume information</ListItem>
+<                   <ListItem>Real-time metrics and historical trends</ListItem>
+<                 </List>
+---
+>                 <Stack hasGutter>
+>                   <Content>Detailed cluster information, metrics, and node-level data would be displayed here.</Content>
+>                   <Content component="p">This view would include:</Content>
+>                   <List>
+>                     <ListItem>Node-level health and resource utilization</ListItem>
+>                     <ListItem>Pod distribution and status</ListItem>
+>                     <ListItem>Network topology and policies</ListItem>
+>                     <ListItem>Storage and persistent volume information</ListItem>
+>                     <ListItem>Real-time metrics and historical trends</ListItem>
+>                   </List>
+>                 </Stack>
+726a695
+>           {/* Add more detailed cards for metrics, nodes, etc. */}
+729c698
+<         <EmptyState titleText="Select a cluster to view details">
+---
+>         <EmptyState titleText="No cluster selected">
+733c702
+<     </>
+---
+>     </Stack>
+735d703
+< 
+738,745c706,713
+<     <Card>
+<       <CardTitle>
+<         <Title headingLevel="h2" size="lg">
+<           Cluster Logs
+<         </Title>
+<       </CardTitle>
+<       <CardBody>
+<         <Content>
+---
+>     <Stack hasGutter>
+>       <Card>
+>         <CardTitle>
+>           <Title headingLevel="h2" size="lg">
+>             Cluster Logs
+>           </Title>
+>         </CardTitle>
+>         <CardBody>
+750,760c718
+<                   <SplitItem>
+<                     <Label color={log.level === 'ERROR' ? 'red' : log.level === 'WARN' ? 'orange' : 'blue'}>
+<                       {log.level}
+<                     </Label>
+<                   </SplitItem>
+<                   <SplitItem>
+<                     <Content component="small">{log.timestamp}</Content>
+<                   </SplitItem>
+<                   <SplitItem>
+<                     <Badge>{log.cluster}</Badge>
+<                   </SplitItem>
+---
+>                   <SplitItem>{getSeverityIcon(log.severity)}</SplitItem>
+763c721,724
+<                       <strong>{log.component}:</strong> {log.message}
+---
+>                       <strong>
+>                         [{log.timestamp}] [{log.cluster}] [{log.source}]
+>                       </strong>{' '}
+>                       {log.message}
+766,770d726
+<                   <SplitItem>
+<                     <Button variant="link" size="sm">
+<                       View Full Log
+<                     </Button>
+<                   </SplitItem>
+775,777c731,733
+<         </Content>
+<       </CardBody>
+<     </Card>
+---
+>         </CardBody>
+>       </Card>
+>     </Stack>
+779d734
+< 
+782c737
+<     <>
+---
+>     <Stack hasGutter>
+787c742
+<         <Gallery hasGutter minWidths={{ default: '250px' }} style={{ marginTop: 'var(--pf-v6-global--spacer--md)' }}>
+---
+>         <Gallery hasGutter minWidths={{ default: '250px' }} className="pf-v6-u-mt-md">
+803,806c758,763
+<                 <Content component="p">{tool.description}</Content>
+<                 <Button variant="primary" size="sm" style={{ marginTop: 'var(--pf-v6-global--spacer--sm)' }}>
+<                   Launch Tool
+<                 </Button>
+---
+>                 <Stack hasGutter>
+>                   <Content component="p">{tool.description}</Content>
+>                   <Button variant="primary" size="sm">
+>                     Launch Tool
+>                   </Button>
+>                 </Stack>
+812d768
+< 
+814,830c770,788
+<         <Title headingLevel="h3" size="lg">
+<           Quick Actions
+<         </Title>
+<         <Flex spaceItems={{ default: 'spaceItemsSm' }} style={{ marginTop: 'var(--pf-v6-global--spacer--md)' }}>
+<           <FlexItem>
+<             <Button variant="secondary">Run Diagnostics</Button>
+<           </FlexItem>
+<           <FlexItem>
+<             <Button variant="secondary">Export Cluster State</Button>
+<           </FlexItem>
+<           <FlexItem>
+<             <Button variant="secondary">Generate Support Bundle</Button>
+<           </FlexItem>
+<           <FlexItem>
+<             <Button variant="tertiary">View Documentation</Button>
+<           </FlexItem>
+<         </Flex>
+---
+>         <Stack hasGutter>
+>           <Title headingLevel="h3" size="lg">
+>             Quick Actions
+>           </Title>
+>           <Flex spaceItems={{ default: 'spaceItemsSm' }} className="pf-v6-u-mt-md">
+>             <FlexItem>
+>               <Button variant="secondary">Run Diagnostics</Button>
+>             </FlexItem>
+>             <FlexItem>
+>               <Button variant="secondary">Export Cluster State</Button>
+>             </FlexItem>
+>             <FlexItem>
+>               <Button variant="secondary">Generate Support Bundle</Button>
+>             </FlexItem>
+>             <FlexItem>
+>               <Button variant="tertiary">View Documentation</Button>
+>             </FlexItem>
+>           </Flex>
+>         </Stack>
+832c790
+<     </>
+---
+>     </Stack>
+834d791
+< 
+837,887c794,836
+<       <Split hasGutter style={{ marginBottom: 'var(--pf-v6-global--spacer--lg)' }}>
+<         <SplitItem isFilled>
+<           <Title headingLevel="h1" size="2xl">
+<             Cluster Health & Troubleshooting Dashboard
+<           </Title>
+<           <Content component="p">Monitor, identify, and troubleshoot issues across all your clusters</Content>
+<         </SplitItem>
+<         <SplitItem>
+<           <Button variant="primary">
+<             <Icon>
+<               <SearchIcon />
+<             </Icon>{' '}
+<             Global Search
+<           </Button>
+<         </SplitItem>
+<       </Split>
+< 
+<       <Tabs
+<         activeKey={activeTabKey}
+<         onSelect={(_event, tabIndex) => setActiveTabKey(tabIndex)}
+<         aria-label="Dashboard tabs"
+<       >
+<         <Tab eventKey={0} title={<TabTitleText>Overview</TabTitleText>} aria-label="Overview tab">
+<           <TabContent id="overview-tab-content">
+<             <TabContentBody>
+<               <div style={{ padding: 'var(--pf-v6-global--spacer--lg)' }}>{overviewTab}</div>
+<             </TabContentBody>
+<           </TabContent>
+<         </Tab>
+<         <Tab eventKey={1} title={<TabTitleText>Detailed View</TabTitleText>} aria-label="Detailed view tab">
+<           <TabContent id="detailed-view-tab-content">
+<             <TabContentBody>
+<               <div style={{ padding: 'var(--pf-v6-global--spacer--lg)' }}>{detailedViewTab}</div>
+<             </TabContentBody>
+<           </TabContent>
+<         </Tab>
+<         <Tab eventKey={2} title={<TabTitleText>Logs</TabTitleText>} aria-label="Logs tab">
+<           <TabContent id="logs-tab-content">
+<             <TabContentBody>
+<               <div style={{ padding: 'var(--pf-v6-global--spacer--lg)' }}>{logsTab}</div>
+<             </TabContentBody>
+<           </TabContent>
+<         </Tab>
+<         <Tab eventKey={3} title={<TabTitleText>Troubleshooting</TabTitleText>} aria-label="Troubleshooting tab">
+<           <TabContent id="troubleshooting-tab-content">
+<             <TabContentBody>
+<               <div style={{ padding: 'var(--pf-v6-global--spacer--lg)' }}>{troubleshootingTab}</div>
+<             </TabContentBody>
+<           </TabContent>
+<         </Tab>
+<       </Tabs>
+---
+>       <Stack hasGutter className="pf-v6-u-mb-lg">
+>         <Split hasGutter>
+>           <SplitItem isFilled>
+>             <Stack>
+>               <Title headingLevel="h1" size="2xl">
+>                 Cluster Health & Troubleshooting Dashboard
+>               </Title>
+>               <Content component="p">Monitor, identify, and troubleshoot issues across all your clusters</Content>
+>             </Stack>
+>           </SplitItem>
+>           <SplitItem>
+>             <Button variant="primary" icon={<SearchIcon />} iconPosition="left">
+>               Global Search
+>             </Button>
+>           </SplitItem>
+>         </Split>
+>         <Tabs
+>           activeKey={activeTabKey}
+>           onSelect={(_event, tabIndex) => setActiveTabKey(tabIndex)}
+>           aria-label="Dashboard tabs"
+>         >
+>           <Tab eventKey={0} title={<TabTitleText>Overview</TabTitleText>} aria-label="Overview tab">
+>             <TabContent id="overview-tab-content">
+>               <TabContentBody className="pf-v6-u-p-lg">{overviewTab}</TabContentBody>
+>             </TabContent>
+>           </Tab>
+>           <Tab eventKey={1} title={<TabTitleText>Detailed View</TabTitleText>} aria-label="Detailed view tab">
+>             <TabContent id="detailed-view-tab-content">
+>               <TabContentBody className="pf-v6-u-p-lg">{detailedViewTab}</TabContentBody>
+>             </TabContent>
+>           </Tab>
+>           <Tab eventKey={2} title={<TabTitleText>Logs</TabTitleText>} aria-label="Logs tab">
+>             <TabContent id="logs-tab-content">
+>               <TabContentBody className="pf-v6-u-p-lg">{logsTab}</TabContentBody>
+>             </TabContent>
+>           </Tab>
+>           <Tab eventKey={3} title={<TabTitleText>Troubleshooting</TabTitleText>} aria-label="Troubleshooting tab">
+>             <TabContent id="troubleshooting-tab-content">
+>               <TabContentBody className="pf-v6-u-p-lg">{troubleshootingTab}</TabContentBody>
+>             </TabContent>
+>           </Tab>
+>         </Tabs>
+>       </Stack>
